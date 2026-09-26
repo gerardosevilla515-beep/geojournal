@@ -153,7 +153,7 @@ footer{margin-top:56px; padding-top:20px; border-top:1px solid var(--line); font
 </div>
 
 <footer>Resumen elaborado a partir de fuentes internacionales — Reuters, Al Jazeera, CNBC, Axios, NPR, The Jerusalem Post, La Prensa.
-  <p class="closing-line">Por la prensa libre sin miramientos y sin dueños</p>
+  <p class="closing-line">Por una prensa libre sin miramientos y sin dueños</p>
 </footer>
 
 </body>
