@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GEOJOURNALNEWS — Resumen Global</title>
+<meta name="description" content="Geojournalnews: 20 noticias diarias de economía, seguridad, diplomacia, América Latina, mundo, cultura y deportes.">
+<style>
+:root{
+  --paper:#F5F6F1; --card:#FFFFFF; --ink:#191B1D; --muted:#6E7276; --line:rgba(25,27,29,0.10);
+  --brand:#146356; --up:#1E8A4C; --down:#B3261E;
+  --c-economia:#B4722B; --c-seguridad:#A8323D; --c-diplomacia:#5C4F94; --c-latam:#2E7D53;
+  --c-mundo:#2B6CB0; --c-cultura:#9C4F8C; --c-deportes:#C0561B;
+  --fs:16px;
+}
+:root[data-theme="dark"]{
+  --paper:#15181A; --card:#1D2124; --ink:#EDEEEC; --muted:#9BA0A3; --line:rgba(237,238,236,0.12);
+  --brand:#4FB3A0; --up:#4CC37F; --down:#F2726A;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--paper); color:var(--ink); font-family:Georgia,'Times New Roman',serif; margin:0; line-height:1.6; font-size:var(--fs); transition:background .3s,color .3s;}
+.wrap{max-width:1080px; margin:0 auto; padding:0 20px 90px;}
+.sans{font-family:Arial,Helvetica,sans-serif;}
+#progress{position:fixed; top:0; left:0; height:3px; width:0; background:var(--brand); z-index:50;}
+
+/* Barra superior */
+.topbar{position:sticky; top:0; z-index:40; background:var(--paper); border-bottom:1px solid var(--line);}
+.topbar .inner{max-width:1080px; margin:0 auto; padding:10px 20px; display:flex; align-items:center; gap:10px;}
+.topbar .mini{font-size:18px; flex:1;}
+.btn{font-family:Arial,Helvetica,sans-serif; font-size:13px; border:1px solid var(--line); background:var(--card); color:var(--ink); padding:7px 11px; border-radius:20px; cursor:pointer;}
+.btn:hover{border-color:var(--brand);}
+
+/* Cotizaciones en movimiento */
+.ticker{overflow:hidden; border-bottom:1px solid var(--line); background:var(--card);}
+.ticker .track{display:inline-flex; gap:34px; padding:9px 0; white-space:nowrap; animation:scroll 55s linear infinite;}
+.ticker:hover .track{animation-play-state:paused;}
+.tk{font-family:Arial,Helvetica,sans-serif; font-size:13px;}
+.tk b{margin-right:6px;}
+.up{color:var(--up);} .down{color:var(--down);}
+@keyframes scroll{from{transform:translateX(0)} to{transform:translateX(-50%)}}
+
+header.masthead{padding:40px 0 18px; text-align:center;}
+.wordmark{font-size:46px; margin:0; letter-spacing:-0.5px;}
+.dateline{font-family:Arial,Helvetica,sans-serif; font-size:13px; color:var(--muted); margin-top:8px;}
+
+/* Filtros y búsqueda */
+.controls{display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin:22px 0 8px;}
+.chip{font-family:Arial,Helvetica,sans-serif; font-size:13px; padding:7px 13px; border-radius:20px; border:1px solid var(--line); background:var(--card); color:var(--ink); cursor:pointer; display:flex; align-items:center; gap:7px;}
+.chip .dot{width:8px; height:8px; border-radius:50%;}
+.chip.active{background:var(--ink); color:var(--paper);}
+.search{display:flex; justify-content:center; margin:10px 0 4px;}
+.search input{width:100%; max-width:460px; padding:10px 16px; border-radius:24px; border:1px solid var(--line); background:var(--card); color:var(--ink); font-size:14px; font-family:Arial,Helvetica,sans-serif;}
+.count{text-align:center; font-family:Arial,Helvetica,sans-serif; font-size:12px; color:var(--muted); margin-top:8px;}
+
+/* Mercados */
+.markets{margin-top:36px; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:26px;}
+.markets h2{font-family:Arial,Helvetica,sans-serif; font-size:15px; margin:0 0 4px; display:flex; align-items:center; gap:9px;}
+.markets .sub{font-family:Arial,Helvetica,sans-serif; font-size:12px; color:var(--muted); margin:0 0 18px;}
+.mgrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:12px;}
+.mcard{border:1px solid var(--line); border-radius:8px; padding:12px 14px; font-family:Arial,Helvetica,sans-serif;}
+.mcard .n{font-size:12px; color:var(--muted);}
+.mcard .v{font-size:19px; font-weight:700; margin:3px 0;}
+.mcard .c{font-size:13px; font-weight:700;}
+.outlook{margin-top:22px; display:grid; grid-template-columns:1fr 1fr; gap:22px;}
+.outlook h3{font-family:Arial,Helvetica,sans-serif; font-size:13px; margin:0 0 8px; text-transform:uppercase; letter-spacing:.5px; color:var(--muted);}
+.outlook p,.outlook li{font-size:15px; line-height:1.65;}
+.outlook ul{padding-left:18px; margin:0;}
+.note{font-family:Arial,Helvetica,sans-serif; font-size:12px; color:var(--muted); margin-top:14px; border-top:1px solid var(--line); padding-top:10px;}
+
+/* Noticias */
+.grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:22px; margin-top:34px;}
+.story{background:var(--card); border:1px solid var(--line); border-radius:10px; overflow:hidden; display:flex; flex-direction:column; transition:transform .2s, box-shadow .2s;}
+.story:hover{transform:translateY(-3px); box-shadow:0 10px 26px rgba(0,0,0,.08);}
+.story.featured{grid-column:1/-1;}
+.cover{height:170px; position:relative; display:flex; align-items:center; justify-content:center; overflow:hidden;}
+.story.featured .cover{height:260px;}
+.cover .place{position:absolute; left:14px; bottom:12px; font-family:Arial,Helvetica,sans-serif; font-size:12px; font-weight:700; color:#fff; background:rgba(0,0,0,.35); padding:4px 9px; border-radius:12px;}
+.cover .cat{position:absolute; right:14px; top:12px; font-family:Arial,Helvetica,sans-serif; font-size:11px; font-weight:700; color:#fff; background:rgba(0,0,0,.30); padding:4px 9px; border-radius:12px; text-transform:uppercase; letter-spacing:.5px;}
+.content{padding:20px 22px 18px; display:flex; flex-direction:column; flex:1;}
+.headline{font-weight:400; font-size:23px; line-height:1.28; margin:0 0 10px;}
+.story.featured .headline{font-size:32px;}
+.dek{font-style:italic; color:var(--muted); margin:0 0 12px;}
+.body p{margin:0 0 12px; line-height:1.75;}
+.more{display:none;}
+.story.open .more{display:block;}
+.actions{margin-top:auto; display:flex; gap:8px; align-items:center; padding-top:8px;}
+.src{font-family:Arial,Helvetica,sans-serif; font-size:11px; color:var(--muted); margin-left:auto; text-align:right; line-height:1.5;}
+.src a,.note a{color:var(--brand); text-decoration:none; font-weight:700;}
+.src a:hover,.note a:hover{text-decoration:underline;}
+.cover .ico{position:absolute; left:16px; top:14px; opacity:.35;}
+.cover .ico svg{width:46px; height:46px;}
+.story.featured .cover .ico svg{width:60px; height:60px;}
+.cover .flags{display:flex; gap:16px; align-items:center; justify-content:center; z-index:1;}
+.cover img.flag{width:auto; height:88px; max-width:150px; object-fit:contain; border-radius:4px; box-shadow:0 6px 18px rgba(0,0,0,.35); transition:transform .3s;}
+.story:hover .cover img.flag{transform:scale(1.05);}
+.story.featured .cover img.flag{height:130px; max-width:220px;}
+.cover .flags:empty + *{display:none;}
+.empty{text-align:center; color:var(--muted); font-family:Arial,Helvetica,sans-serif; padding:40px 0; display:none;}
+
+/* Tres cosas */
+.threethings{margin-top:60px; padding:34px 30px; background:var(--brand); color:#fff; border-radius:10px;}
+.threethings h2{font-family:Arial,Helvetica,sans-serif; font-size:14px; margin:0 0 20px; opacity:.9;}
+.threethings ol{margin:0; padding:0; list-style:none; counter-reset:tt;}
+.threethings li{counter-increment:tt; margin-bottom:18px; padding-left:38px; position:relative; line-height:1.6;}
+.threethings li::before{content:counter(tt); position:absolute; left:0; top:-3px; font-size:24px; font-weight:700; opacity:.6;}
+footer{margin-top:50px; padding-top:20px; border-top:1px solid var(--line); font-family:Arial,Helvetica,sans-serif; font-size:13px; color:var(--muted); text-align:center;}
+.closing-line{margin-top:12px; font-family:Georgia,serif; font-style:italic; font-size:15px; color:var(--ink);}
+#toTop{position:fixed; right:18px; bottom:22px; display:none; z-index:45;}
+#toast{position:fixed; left:50%; bottom:24px; transform:translateX(-50%); background:var(--ink); color:var(--paper); padding:9px 16px; border-radius:20px; font-family:Arial,Helvetica,sans-serif; font-size:13px; display:none; z-index:60;}
+@media (max-width:640px){
+  .wordmark{font-size:36px;} .outlook{grid-template-columns:1fr;}
+  .story.featured .headline{font-size:26px;} .story.featured .cover{height:190px;}
+  .grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<div class="topbar">
+  <div class="inner">
+    <span class="mini">Geojournalnews</span>
+    <button class="btn" id="fsDown" title="Reducir letra">A−</button>
+    <button class="btn" id="fsUp" title="Aumentar letra">A+</button>
+    <button class="btn" id="theme" title="Cambiar tema">🌙</button>
+  </div>
+</div>
+<div class="ticker"><div class="track" id="ticker"></div></div>
+
+<div class="wrap">
+<header class="masthead">
+  <p class="wordmark">Geojournalnews</p>
+  <p class="dateline">Sábado, 26 de septiembre de 2026 · resumen de las últimas 24 horas</p>
+</header>
+
+<!-- ============ MERCADOS ============ -->
+<section class="markets" id="mercados">
+  <h2><span style="width:9px;height:9px;border-radius:50%;background:var(--c-economia);display:inline-block"></span>Mercados: cierre del viernes 25 de septiembre</h2>
+  <p class="sub">Última sesión bursátil. Las bolsas no operan en fin de semana; la próxima apertura es el lunes 28.</p>
+  <div class="mgrid" id="mgrid"></div>
+  <div class="outlook">
+    <div>
+      <h3>Cómo cerró la semana</h3>
+      <p>Wall Street cerró su primera semana ganadora en tres: el S&amp;P 500 sumó 1,2 %, el Nasdaq 2 % y el Dow 0,3 %, lo que cortó una racha de tres semanas en rojo. La tecnología lideró, con un avance semanal de 3,1 % del sector en el S&amp;P 500, mientras que el petróleo retrocedió el viernes ante la expectativa de una reapertura del estrecho de Ormuz.</p>
+      <p>En México, el IPC de la Bolsa Mexicana subió 1,13 % el viernes y 2,55 % en la semana, poniendo fin a cuatro semanas consecutivas de pérdidas. Alsea lideró las alzas (+4,34 %) y Becle registró la mayor caída (−3,99 %).</p>
+    </div>
+    <div>
+      <h3>Qué vigilar en la próxima sesión (lunes 28)</h3>
+      <ul>
+        <li><strong>Acuerdo EE. UU.–China:</strong> el representante comercial Jamieson Greer anunció que el lunes se publicarán más detalles de lo pactado en la cumbre.</li>
+        <li><strong>Bonos:</strong> el rendimiento a 10 años sigue cerca de su nivel más alto desde 2007; si continúa subiendo, podría frenar a la bolsa.</li>
+        <li><strong>Fed:</strong> los futuros asignan cerca de 64 % de probabilidad a otra subida de tasas en octubre.</li>
+        <li><strong>Petróleo:</strong> cualquier señal sobre Ormuz moverá el crudo; el rechazo de Trump al plan iraní es un riesgo al alza para el precio.</li>
+        <li><strong>Agenda:</strong> el informe de empleo de EE. UU. del 2 de octubre es el dato clave de la semana.</li>
+        <li><strong>México:</strong> analistas esperan que el IPC intente consolidarse por encima de 65.000 puntos.</li>
+      </ul>
+    </div>
+  </div>
+  <p class="note">Fuentes: <a href="https://apnews.com/article/wall-street-stocks-dow-nasdaq-36d06c7a598e03539e0e09bdf6b7ede2" target="_blank" rel="noopener">AP</a> · <a href="https://www.cnbc.com/2026/09/24/stock-market-today-live-updates.html" target="_blank" rel="noopener">CNBC</a> · <a href="https://www.investopedia.com/stock-market-today-dow-jones-s-and-p-500-09252026-12139934" target="_blank" rel="noopener">Investopedia</a> · <a href="https://elceo.com/mercados/bmv-ipc-wall-street-hoy-25-de-septiembre-de-2026-cierre/" target="_blank" rel="noopener">El CEO</a> · <a href="https://www.reuters.com/world/china/trump-wrap-up-xi-summit-with-tour-us-archives-2026-09-25/" target="_blank" rel="noopener">Reuters</a> · <a href="https://note.com/hanatakajisan/n/ndb96e688fabc?hl=en" target="_blank" rel="noopener">Market Commentary (note)</a>. Las perspectivas reflejan el consenso de analistas y no son recomendaciones de inversión.</p>
+</section>
+
+<!-- ============ FILTROS ============ -->
+<div class="controls" id="chips"></div>
+<div class="search"><input id="q" type="search" placeholder="Buscar en las noticias de hoy…"></div>
+<p class="count" id="count"></p>
+
+<div class="grid" id="grid"></div>
+<p class="empty" id="empty">No hay noticias que coincidan con tu búsqueda.</p>
+
+<div class="threethings">
+  <h2>Si solo recuerdas tres cosas de hoy, son estas:</h2>
+  <ol>
+    <li><strong>Ormuz sigue cerrado a la diplomacia:</strong> el rechazo de Trump al plan iraní amenaza con revertir la caída del petróleo del viernes y mantiene la presión sobre los combustibles.</li>
+    <li><strong>El dinero se encarece:</strong> bonos en máximos desde 2007 y posible nueva subida de la Fed en octubre fortalecen al dólar y encarecen el crédito en la región.</li>
+    <li><strong>Nicaragua se blinda:</strong> reformas con periodos de siete años y un discurso en la ONU alineado con los BRICS, mientras crece la cifra de presos políticos.</li>
+  </ol>
+</div>
+
+<footer>Resumen elaborado a partir de fuentes internacionales; cada noticia enlaza a su fuente original. Imágenes: banderas de <a href="https://commons.wikimedia.org" target="_blank" rel="noopener" style="color:var(--brand)">Wikimedia Commons</a>, dominio público.
+  <p class="closing-line">Por la prensa libre sin miramientos y sin dueños</p>
+</footer>
+</div>
+
+<button class="btn" id="toTop" title="Volver arriba">↑ Arriba</button>
+<div id="toast"></div>
+
+<script>
+/* ================== DATOS DEL DÍA (edita solo esta parte cada día) ================== */
+const MARKETS = [
+  {n:"Dow Jones", v:"51.828,62", c:"+0,93 %"},
+  {n:"S&P 500", v:"7.743,41", c:"+0,51 %"},
+  {n:"Nasdaq", v:"27.068,72", c:"+0,48 %"},
+  {n:"Russell 2000", v:"2.837,55", c:"+0,07 %"},
+  {n:"IPC México", v:"64.992,23", c:"+1,13 %"},
+  {n:"Petróleo WTI", v:"$92,41", c:"−2,33 %"},
+  {n:"Petróleo Brent", v:"$104,32", c:"−2,14 %"},
+  {n:"Oro (futuros)", v:"$4.315", c:"+0,5 %"},
+  {n:"Bono EE. UU. 10 años", v:"5,163 %", c:"máx. desde 2007", flat:true},
+  {n:"Bono EE. UU. 30 años", v:"5,488 %", c:"máx. desde 2004", flat:true},
+  {n:"Dólar / peso mexicano", v:"17,68", c:"sábado", flat:true},
+  {n:"Bitcoin", v:"≈ $84.000", c:"leve baja", flat:true}
+];
+
+const CATS = {
+  economia:{label:"Economía", color:"var(--c-economia)"},
+  seguridad:{label:"Seguridad", color:"var(--c-seguridad)"},
+  diplomacia:{label:"Diplomacia", color:"var(--c-diplomacia)"},
+  latam:{label:"América Latina", color:"var(--c-latam)"},
+  mundo:{label:"Mundo y clima", color:"var(--c-mundo)"},
+  cultura:{label:"Cultura", color:"var(--c-cultura)"},
+  deportes:{label:"Deportes", color:"var(--c-deportes)"}
+};
+
+/* flags: banderas de Wikimedia Commons (dominio público). Nombre = parte final de "Flag_of_XXXX.svg".
+   Si una imagen no carga, se muestra automáticamente la ilustración de la categoría. */
+const STORIES = [
+{cat:"economia", featured:true, place:"Washington · Teherán", flags:["the_United_States", "Iran"],
+ h:"Trump rechaza el plan iraní de siete días para reabrir Ormuz",
+ d:"El rechazo llega un día después de que la expectativa de un acuerdo hiciera caer el petróleo.",
+ b:["El presidente Donald Trump rechazó el marco de siete días propuesto por Irán para un alto el fuego y la reapertura del estrecho de Ormuz, según reportes que citan a funcionarios estadounidenses. La propuesta iraní vinculaba la reapertura de esta vía estratégica con el fin de la presión militar de Estados Unidos, cambios en las sanciones y el levantamiento del bloqueo que afecta a los puertos iraníes.",
+    "Trump sostiene públicamente que Teherán quiere un acuerdo, pero se mantiene escéptico sobre si cumplirá las exigencias de Washington sobre su programa nuclear. El presidente iraní, Masud Pezeshkian, sigue enviando señales de apertura a la diplomacia, aunque la desconfianza entre ambos gobiernos es profunda.",
+    "El mercado había apostado por lo contrario: el viernes, la posibilidad de una reapertura llevó al WTI a cerrar en 92,41 dólares y al Brent en 104,32, con caídas superiores al 2 %. Irán había pedido volver al memorando de entendimiento de junio, que no logró poner fin al conflicto. Para países importadores de combustible como Nicaragua, cualquier giro en Ormuz se traslada a los precios de gasolina, diésel y fletes."],
+ src:[["Open Chronicle","https://openchronicle.org/2026/09/26/global-news-brief-key-developments-around-the-world-september-26-2026/"],["CNBC","https://www.cnbc.com/2026/09/24/stock-market-today-live-updates.html"]]},
+{cat:"economia", place:"Nueva York · Washington", flags:["the_United_States"],
+ h:"Los bonos del Tesoro rozan máximos desde 2007 y el mercado apuesta por otra subida de la Fed",
+ d:"",
+ b:["El rendimiento del bono del Tesoro a 10 años terminó la semana alrededor de 5,16 %, cerca de su nivel más alto desde 2007, y el de 30 años llegó a 5,49 %, un nivel que no se veía desde 2004. La Reserva Federal ya subió su tasa de referencia 25 puntos básicos, y los futuros asignan cerca de 64 % de probabilidad a otra subida en octubre.",
+    "El alza se explica por comentarios duros del gobernador de la Fed Michael Barr, los precios elevados de la energía por la guerra con Irán y un índice de gerentes de compras (PMI) de 58,4, el más alto en más de cinco años. Paradójicamente, la fortaleza de la economía alimenta la expectativa de más subidas de tasas.",
+    "Para América Latina, las tasas altas en Estados Unidos atraen capitales hacia activos en dólares y presionan a las monedas de la región, como se vio esta semana con el peso mexicano."],
+ src:[["CNBC","https://www.cnbc.com/2026/09/24/stock-market-today-live-updates.html"],["Market Commentary (note)","https://note.com/hanatakajisan/n/ndb96e688fabc?hl=en"]]},
+{cat:"economia", place:"Washington · Pekín", flags:["the_United_States", "the_People%27s_Republic_of_China"],
+ h:"Trump y Xi cierran su cumbre con mucha ceremonia y pocos acuerdos",
+ d:"La tregua comercial se extiende dos meses; los detalles se publicarán el lunes.",
+ b:["Xi Jinping concluyó el viernes una cumbre de tres días en Washington, con sobrevuelos militares, cena de Estado, té en la Casa Blanca y visita a los Archivos Nacionales. El resultado concreto más importante fue la extensión por dos meses de la tregua comercial que vencía el 10 de noviembre, lo que da más tiempo para negociar un acuerdo mayor.",
+    "Según el representante comercial Jamieson Greer, ambos países acordaron excluir de las disputas algunos bienes clave, como las exportaciones agrícolas y de dispositivos médicos hacia China. Sin embargo, quedaron sin resolver las diferencias sobre inteligencia artificial, Taiwán y los vínculos de China con Irán.",
+    "Trump anunció que se reunirá dos veces más con Xi este año: en noviembre en China, durante el foro APEC, y en diciembre en Miami, en la cumbre del G20."],
+ src:[["Reuters","https://www.reuters.com/world/china/trump-wrap-up-xi-summit-with-tour-us-archives-2026-09-25/"]]},
+{cat:"economia", place:"Silicon Valley · Nueva York", flags:["the_United_States"],
+ h:"La inteligencia artificial vuelve a sostener a Wall Street",
+ d:"",
+ b:["El sector tecnológico fue el motor de la semana, con un avance de 3,1 % en el S&P 500. Meta Platforms acumuló casi 13 % de ganancia semanal por el entusiasmo en torno a su agente de inteligencia artificial Muse, y Microsoft subió cerca de 4 % el viernes.",
+    "Akamai Technologies ganó alrededor de 3 % después de anunciar que Anthropic se comprometió a pagarle al menos 11.600 millones de dólares en siete años por infraestructura en la nube y software, con posibilidad de ampliar el contrato en 9.000 millones más. Costco también subió 3 % tras presentar resultados trimestrales mejores de lo esperado.",
+    "La otra cara es la cautela: los analistas advierten que el sentimiento de los inversionistas se ha debilitado con el alza de los rendimientos y que, si las tasas siguen subiendo, terminarán pesando más sobre la bolsa."],
+ src:[["CNBC","https://www.cnbc.com/2026/09/24/stock-market-today-live-updates.html"],["Investopedia","https://www.investopedia.com/stock-market-today-dow-jones-s-and-p-500-09252026-12139934"]]},
+{cat:"economia", place:"Mar Rojo · Canal de Panamá", flags:["Panama"],
+ h:"Cuellos de botella logísticos amenazan con encarecer la Navidad",
+ d:"",
+ b:["El conflicto en Oriente Próximo y la sequía que limita el tránsito por el Canal de Panamá aparecen como los principales cuellos de botella para las cadenas de suministro en el último trimestre del año, según un análisis publicado este sábado.",
+    "La presión simultánea sobre el estrecho de Ormuz y Bab el Mandeb, dos pasos clave para el comercio de energía, se suma al problema. Para los importadores de Centroamérica, esto puede traducirse en fletes más caros y tiempos de tránsito más largos justo antes de la temporada alta de ventas."],
+ src:[["El Mundo","https://www.elmundo.es/elmundo/hemeroteca/2026/09/26/noticias.html"],["Open Chronicle","https://openchronicle.org/2026/09/26/global-news-brief-key-developments-around-the-world-september-26-2026/"]]},
+
+{cat:"seguridad", place:"Kiev · Zaporiyia · Krasnodar", flags:["Ukraine"],
+ h:"Rusia lanza 173 drones sobre Ucrania; al menos seis muertos",
+ d:"Ucrania responde con un ataque contra una refinería en el sur de Rusia.",
+ b:["Los ataques rusos de la madrugada dejaron al menos seis muertos y decenas de heridos en toda Ucrania, según fuentes oficiales ucranianas, que contabilizaron 173 drones. Entre las víctimas están una madre y la abuela de un niño de tres años, que murieron en su vivienda durante un ataque en Zaporiyia.",
+    "Según medios locales, drones atacaron la refinería de Ilsky, en el territorio de Krasnodar, donde se declaró un incendio. Los ataques contra instalaciones energéticas rusas se han vuelto parte central de la estrategia de Kiev para reducir los ingresos petroleros de Moscú."],
+ src:[["Euronews","https://www.dailymotion.com/video/xbdbfjq"]]},
+{cat:"seguridad", place:"Riad · Khamis Mushait", flags:["Saudi_Arabia"],
+ h:"Arabia Saudí intercepta drones hutíes y un misil balístico",
+ d:"",
+ b:["Las defensas aéreas saudíes interceptaron este sábado dos drones lanzados por los hutíes de Yemen hacia la región de Riad, según la coalición liderada por Arabia Saudí. Por separado, derribaron un misil balístico dirigido contra Khamis Mushait, en el suroeste del reino, donde se encuentra una importante base aérea.",
+    "El Consejo de Cooperación del Golfo condenó los ataques y pidió una respuesta internacional. Riad exigió además ante la ONU que se proteja la libertad de navegación en Ormuz y Bab el Mandeb, dos estrechos cuya inestabilidad simultánea preocupa por su impacto en los flujos mundiales de energía."],
+ src:[["Open Chronicle","https://openchronicle.org/2026/09/26/global-news-brief-key-developments-around-the-world-september-26-2026/"],["El Mundo","https://www.elmundo.es/elmundo/hemeroteca/2026/09/26/noticias.html"]]},
+{cat:"seguridad", place:"La Habana · Nueva York", flags:["Cuba"],
+ h:"Cuba califica el bloqueo energético como un acto de guerra",
+ d:"",
+ b:["El canciller cubano denunció ante la Asamblea General de la ONU que más de 7.000 contenedores con alimentos, medicamentos y dispositivos médicos destinados a la isla están retenidos en puertos de terceros países.",
+    "La Habana describió la situación como un castigo colectivo destinado a provocar una crisis humanitaria, algo que considera prohibido por el derecho internacional humanitario. El canciller advirtió además de una amenaza latente de uso de la fuerza militar contra Cuba."],
+ src:[["Noticias ONU","https://news.un.org/es/news"]]},
+{cat:"seguridad", place:"Moscú · Bruselas", flags:["Russia", "Europe"],
+ h:"Putin niega preparar un conflicto con Europa mientras crecen los ataques híbridos",
+ d:"",
+ b:["En una rueda de prensa el viernes, Vladímir Putin aseguró que Moscú no se prepara para un conflicto con Europa. Sus palabras llegan en un momento en que varios países europeos denuncian un número creciente de presuntos ataques híbridos rusos, como sabotajes e incursiones aéreas.",
+    "En paralelo, Rusia acusó ante la ONU a los gobiernos europeos de hacer todo lo posible por frustrar los planes de paz en Ucrania. El Kremlin sostiene que los objetivos de su operación militar se alcanzarán."],
+ src:[["Euronews","https://www.dailymotion.com/video/xbdbfjq"],["El Mundo","https://www.elmundo.es/elmundo/hemeroteca/2026/09/26/noticias.html"]]},
+
+{cat:"diplomacia", place:"Nueva York · Moscú", flags:["Russia"],
+ h:"Lavrov propone una nueva arquitectura de seguridad euroasiática",
+ d:"",
+ b:["El canciller ruso, Serguéi Lavrov, anunció ante la Asamblea General el inicio de los trabajos de una carta euroasiática de la diversidad y la multipolaridad, que presentó como la base de una nueva arquitectura de seguridad en Eurasia. También condenó la captura de Maduro y la muerte de Jamenei, a las que calificó de imposiciones por la fuerza.",
+    "Sobre la reforma de la ONU, Lavrov respaldó que Brasil e India obtengan un asiento permanente en el Consejo de Seguridad, pero rechazó que lo tengan Alemania y Japón, a los que acusó de seguir un camino de militarización."],
+ src:[["Noticias ONU","https://news.un.org/es/news"]]},
+{cat:"diplomacia", place:"Nueva York · Caracas", flags:["Venezuela"],
+ h:"Trump se reúne con Delcy Rodríguez en su regreso a la ONU",
+ d:"",
+ b:["La presidenta encargada de Venezuela, Delcy Rodríguez, agradeció a Trump su respaldo al proceso de reinserción de su país en la escena internacional, tras un encuentro calificado de histórico que coincidió con su regreso a la ONU.",
+    "Dentro de Venezuela el ambiente es otro: miles de personas salieron a la calle para exigir el regreso de María Corina Machado, y en Caracas fue detenido el exviceministro y exdiputado chavista Alexander «Mimou» Vargas."],
+ src:[["Libertad Digital","https://www.libertaddigital.com/internacional/2026-09-26/"]]},
+{cat:"diplomacia", place:"Buenos Aires · Nueva York", flags:["Argentina"],
+ h:"Milei exige reanudar las negociaciones por las Malvinas",
+ d:"",
+ b:["El presidente argentino, Javier Milei, pidió retomar las negociaciones sobre la soberanía de las islas Malvinas y criticó con dureza a la ONU, a la que calificó de estructura inútil.",
+    "Milei también arremetió contra el presidente del Gobierno español, Pedro Sánchez, al que acusó de haber traicionado a su propio pueblo, en referencia a la crisis migratoria en Ceuta."],
+ src:[["Libertad Digital","https://www.libertaddigital.com/internacional/2026-09-26/"]]},
+{cat:"diplomacia", place:"París", flags:["France"],
+ h:"León XIV reúne a multitudes en París en su primera visita oficial a Francia",
+ d:"",
+ b:["Cientos de miles de fieles llenaron este sábado los Campos Elíseos para escuchar al papa León XIV, en la primera visita oficial de un pontífice a Francia en 18 años.",
+    "Las autoridades desplegaron unos 14.000 policías, gendarmes y efectivos de seguridad para proteger la misa y los alrededores, en una de las mayores operaciones de seguridad del año en la capital francesa."],
+ src:[["Euronews","https://www.dailymotion.com/video/xbdbfjq"]]},
+
+{cat:"latam", featured:true, place:"Managua · Nueva York", flags:["Nicaragua"],
+ h:"Nicaragua ante la ONU: el narcotráfico es una forma de terrorismo",
+ d:"El discurso destacó el peso de los BRICS en el escenario internacional.",
+ b:["El representante de Nicaragua ante la Asamblea General, Valdrack Ludwing Jaentschke Whitaker, calificó el narcotráfico y el crimen organizado como formas de terrorismo.",
+    "En su intervención, destacó la fuerza que han mostrado los países del BRICS, el bloque de economías emergentes que integran, entre otros, Brasil e India, frente a lo que considera los grandes males de esta época. El discurso reafirma el alineamiento de Managua con ese bloque."],
+ src:[["Noticias ONU","https://news.un.org/es/news"]]},
+{cat:"latam", place:"Managua", flags:["Nicaragua"],
+ h:"Avanza la consulta de las reformas constitucionales",
+ d:"",
+ b:["La copresidenta Rosario Murillo destacó el respaldo de más de 14 partidos políticos y tres movimientos y asociaciones a las reformas parciales a la Constitución, durante un encuentro con la comisión encabezada por el presidente de la Asamblea Nacional, Gustavo Porras. Las reformas fueron aprobadas en primera legislatura tras 36 días de consultas.",
+    "El proyecto fija en siete años los periodos de los cargos de elección popular y de las jefaturas del Ejército y la Policía, y amplía a siete años los periodos de los funcionarios en ejercicio. También establece el 18 de enero como fecha de toma de posesión de los copresidentes, declara sin efectos jurídicos en Nicaragua las leyes de otros Estados u organismos internacionales, y restringe el acceso a cargos públicos a quienes promuevan la injerencia extranjera."],
+ src:[["Prensa Latina","https://www.prensa-latina.cu/2026/09/26/nicaragua-copresidenta-destaca-respaldo-de-partidos-a-reformas/"]]},
+{cat:"latam", place:"Nicaragua · Exilio", flags:["Nicaragua"],
+ h:"Suben a 68 los presos políticos, 31 de ellos desaparecidos",
+ d:"",
+ b:["La Asociación Memoria y Justicia por Nicaragua (AMJ) documentó, al 24 de septiembre, a 53 hombres y 15 mujeres encarcelados por motivos políticos, ocho más que en julio. Quince son adultos mayores y 31 permanecen en condición de desaparición forzada, una tendencia que la organización calificó de especialmente preocupante.",
+    "La lista vuelve a incluir a seis familiares del exdiputado miskito Brooklyn Rivera, fallecido bajo custodia estatal el 30 de mayo, que fueron detenidos cuando intentaban reclamar su cuerpo. Las cifras están avaladas por la CIDH, y la AMJ contabiliza 1.506 detenciones por motivos políticos en los últimos ocho años."],
+ src:[["El Nacional","https://www.elnacional.com/2026/09/suben-a-68-los-opositores-presos-en-nicaragua-incluidos-31-desaparecidos/"]]},
+{cat:"latam", place:"Ciudad de México · Washington", flags:["Mexico"],
+ h:"El T-MEC sigue sin renovarse y el peso cierra su peor semana desde marzo",
+ d:"",
+ b:["El gobierno de Trump no ha firmado la renovación del T-MEC, y las autoridades mexicanas reconocen que, aunque las negociaciones avanzan, el nuevo acuerdo podría no concretarse antes de fin de mes.",
+    "El peso mexicano recuperó algo de terreno este sábado y cotizó en 17,68 por dólar, frente a 17,71 el viernes. Aun así, acumuló una depreciación semanal de 2,65 %, su mayor pérdida desde la primera semana de marzo, presionado por la subida de tasas de la Fed. En contraste, la Bolsa Mexicana cortó una racha de cuatro semanas de pérdidas."],
+ src:[["MARCA México","https://www.marca.com/mx/actualidad/dinero/2026/09/26/precio-dolar-hoy-sabado-26-septiembre-2026-peso-recupera-negociaciones-mexico-eeuu.html"],["El CEO","https://elceo.com/mercados/bmv-ipc-wall-street-hoy-25-de-septiembre-de-2026-cierre/"]]},
+
+{cat:"mundo", place:"Bangkok · Tailandia", flags:["Thailand"],
+ h:"Bangkok declara zona de desastre sus 50 distritos por inundaciones",
+ d:"Casi 300 mm de lluvia en 48 horas desbordaron los canales de la capital tailandesa.",
+ b:["Las autoridades de Bangkok declararon zona de desastre los 50 distritos de la ciudad después de que cayeran casi 300 milímetros de lluvia desde el jueves por la tarde, según el gobernador Chadchart Sittipunt. Las calles principales quedaron sumergidas, hubo autos abandonados y el agua entró en viviendas y comercios junto a los canales.",
+    "Más de 84.000 personas en 21 provincias resultaron afectadas en todo el país. Bangkok habilitó más de 200 refugios y miles de residentes se trasladaron a ellos. El gobierno afirmó que la situación se había estabilizado, pero que el agua tardaría dos o tres días en drenarse si no vuelve a llover.",
+    "Una residente comparó la situación con las inundaciones de 2011, la última vez que la ciudad sufrió un golpe similar. Muchos comercios cerraron el sábado y el metro ofreció sus estacionamientos gratis para resguardar vehículos hasta el 2 de octubre."],
+ src:[["Al Jazeera","https://www.aljazeera.com/news/2026/9/26/disaster-zone-declared-across-bangkok-as-heavy-rain-triggers-flooding"],["AP / Local 10","https://www.local10.com/news/2026/09/26/heavy-rain-and-flooding-in-bangkok-disrupts-traffic-and-prompts-evacuations/"]]},
+{cat:"cultura", place:"San Sebastián · Bogotá", flags:["Spain", "the_United_Kingdom"],
+ h:"Mike Leigh gana la Concha de Oro en San Sebastián",
+ d:"",
+ b:["El cineasta británico Mike Leigh se llevó la Concha de Oro del Festival de San Sebastián con una película que la crítica de El Mundo calificó de obra maestra. El festival es el más importante del cine en lengua española y una de las citas clave del calendario europeo.",
+    "En la música, la banda Arde Bogotá agotó en menos de cuatro horas las entradas de su gira, que tendrá una fecha el 27 de noviembre en la sala La Riviera de Madrid."],
+ src:[["El Mundo","https://www.elmundo.es/elmundo/hemeroteca/2026/09/26/noticias.html"]]},
+{cat:"deportes", place:"Mundial de ciclismo · Madrid", flags:["the_Netherlands", "France"],
+ h:"Demi Vollering, campeona del mundo; Mbappé, baja unas dos semanas",
+ d:"",
+ b:["La neerlandesa Demi Vollering se coronó campeona del mundo de ciclismo en ruta y completó un año de ensueño. En la prueba masculina, el español Juan Ayuso busca medalla en un Mundial sin la presencia de Tadej Pogačar.",
+    "En el fútbol, Kylian Mbappé sufre una hiperextensión de la cápsula posterior de la rodilla izquierda y podría estar de baja solo dos semanas. En la Premier League, la sanción al Manchester City podría tardar hasta un año en conocerse."],
+ src:[["El Mundo","https://www.elmundo.es/elmundo/hemeroteca/2026/09/26/noticias.html"]]}
+];
+/* ================== FIN DE LOS DATOS ================== */
+
+const ICONS = {
+ economia:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><path d="M3 20h18"/><path d="M5 16l4-5 4 3 6-8"/><path d="M15 6h4v4"/></svg>',
+ seguridad:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg>',
+ diplomacia:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>',
+ latam:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><path d="M12 21s-7-6.5-7-12a7 7 0 0114 0c0 5.5-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>',
+ mundo:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><path d="M7 15a4 4 0 010-8 5 5 0 019.6 1.5A3.5 3.5 0 0117 15z"/><path d="M8 18l-1 2M12 18l-1 2M16 18l-1 2"/></svg>',
+ cultura:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 5v14M17 5v14M3 9h4M3 15h4M17 9h4M17 15h4"/></svg>',
+ deportes:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><path d="M8 4h8v5a4 4 0 01-8 0z"/><path d="M8 6H5a3 3 0 003 4M16 6h3a3 3 0 01-3 4M12 13v4M8 20h8"/></svg>'
+};
+
+const $ = s => document.querySelector(s);
+let current = "todas";
+
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.style.display="block"; setTimeout(()=>t.style.display="none",1800); }
+
+function renderTicker(){
+  const html = MARKETS.map(m=>{
+    const cls = m.flat ? "" : (m.c.trim().startsWith("+") ? "up" : "down");
+    const arrow = m.flat ? "" : (cls==="up" ? "▲ " : "▼ ");
+    return `<span class="tk"><b>${m.n}</b>${m.v} <span class="${cls}">${arrow}${m.c}</span></span>`;
+  }).join("");
+  $("#ticker").innerHTML = html + html;
+  $("#mgrid").innerHTML = MARKETS.map(m=>{
+    const cls = m.flat ? "" : (m.c.trim().startsWith("+") ? "up" : "down");
+    return `<div class="mcard"><div class="n">${m.n}</div><div class="v">${m.v}</div><div class="c ${cls}">${m.c}</div></div>`;
+  }).join("");
+}
+
+function renderChips(){
+  const all = `<button class="chip active" data-cat="todas">Todas</button>`;
+  const rest = Object.entries(CATS).map(([k,c])=>`<button class="chip" data-cat="${k}"><span class="dot" style="background:${c.color}"></span>${c.label}</button>`).join("");
+  $("#chips").innerHTML = all + rest;
+  document.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{
+    document.querySelectorAll(".chip").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active"); current=b.dataset.cat; filter();
+  });
+}
+
+function renderStories(){
+  $("#grid").innerHTML = STORIES.map((s,i)=>{
+    const c = CATS[s.cat];
+    const fimgs = (s.flags||[]).map(f=>`<img class="flag" src="https://commons.wikimedia.org/wiki/Special:FilePath/Flag_of_${f}.svg?width=360" alt="Bandera de ${decodeURIComponent(f).replace(/_/g," ").replace(/^the /,"")}" loading="lazy" onerror="this.remove()">`).join("");
+    const cover = `<span class="ico">${ICONS[s.cat]}</span><span class="flags">${fimgs}</span>`;
+    const srcLinks = s.src.map(([n,u])=>`<a href="${u}" target="_blank" rel="noopener">${n}</a>`).join(" · ");
+    const credit = (s.flags||[]).map(f=>`<a href="https://commons.wikimedia.org/wiki/File:Flag_of_${f}.svg" target="_blank" rel="noopener">Wikimedia Commons</a>`)[0]||"";
+    const bg = `background:linear-gradient(135deg, ${c.color}, rgba(0,0,0,.55))`;
+    const first = `<p>${s.b[0]}</p>`;
+    const more = s.b.slice(1).map(p=>`<p>${p}</p>`).join("");
+    return `<article class="story${s.featured?" featured":""}" id="n${i+1}" data-cat="${s.cat}">
+      <div class="cover" style="${bg}">${cover}<span class="cat">${c.label}</span><span class="place">${s.place}</span></div>
+      <div class="content">
+        <h3 class="headline">${s.h}</h3>
+        ${s.d?`<p class="dek">${s.d}</p>`:""}
+        <div class="body">${first}<div class="more">${more}</div></div>
+        <div class="actions">
+          <button class="btn toggle">Leer más</button>
+          <button class="btn share" title="Compartir">Compartir</button>
+          <span class="src">Fuentes: ${srcLinks}<br>Imagen: ${credit} (dominio público)</span>
+        </div>
+      </div></article>`;
+  }).join("");
+  document.querySelectorAll(".story").forEach(a=>{
+    a.querySelector(".toggle").onclick=e=>{ a.classList.toggle("open"); e.target.textContent=a.classList.contains("open")?"Leer menos":"Leer más"; };
+    a.querySelector(".share").onclick=async()=>{
+      const url = location.origin + location.pathname + "#" + a.id;
+      const title = a.querySelector(".headline").textContent;
+      if(navigator.share){ try{ await navigator.share({title, url}); }catch(e){} }
+      else { navigator.clipboard.writeText(url); toast("Enlace copiado"); }
+    };
+  });
+}
+
+function filter(){
+  const q = $("#q").value.toLowerCase().trim();
+  let n=0;
+  document.querySelectorAll(".story").forEach(a=>{
+    const okCat = current==="todas" || a.dataset.cat===current;
+    const okQ = !q || a.textContent.toLowerCase().includes(q);
+    const show = okCat && okQ; a.style.display = show ? "" : "none"; if(show) n++;
+  });
+  $("#count").textContent = `${n} de ${STORIES.length} noticias`;
+  $("#empty").style.display = n ? "none" : "block";
+}
+
+/* Tema, tamaño de letra, progreso, volver arriba */
+function applyTheme(t){ document.documentElement.dataset.theme=t; $("#theme").textContent = t==="dark"?"☀️":"🌙"; }
+const saved = localStorage.getItem("gjn-theme") || (matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");
+applyTheme(saved);
+$("#theme").onclick=()=>{ const t=document.documentElement.dataset.theme==="dark"?"light":"dark"; applyTheme(t); localStorage.setItem("gjn-theme",t); };
+let fs = parseInt(localStorage.getItem("gjn-fs")||"16");
+const setFs=()=>{ document.documentElement.style.setProperty("--fs",fs+"px"); localStorage.setItem("gjn-fs",fs); };
+setFs();
+$("#fsUp").onclick=()=>{ if(fs<22){fs++; setFs();} };
+$("#fsDown").onclick=()=>{ if(fs>13){fs--; setFs();} };
+window.addEventListener("scroll",()=>{
+  const h=document.documentElement; const p=h.scrollTop/(h.scrollHeight-h.clientHeight)*100;
+  $("#progress").style.width=p+"%"; $("#toTop").style.display = h.scrollTop>600?"block":"none";
+});
+$("#toTop").onclick=()=>scrollTo({top:0});
+$("#q").addEventListener("input",filter);
+
+renderTicker(); renderChips(); renderStories(); filter();
+if(location.hash){ const el=document.querySelector(location.hash); if(el){ el.classList.add("open"); el.querySelector(".toggle").textContent="Leer menos"; setTimeout(()=>el.scrollIntoView(),100);} }
+</script>
+</body>
+</html>
