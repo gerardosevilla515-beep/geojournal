@@ -3,121 +3,158 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>GEOJOURNAL — Resumen Global</title>
+<title>GEOJOURNALNEWS — Resumen Global</title>
 <style>
 :root{
-  --ink:#111; --paper:#fdfcf9; --rule:#111; --accent:#a3121a; --gray:#555; --muted:#888;
+  --paper:#F5F6F1; --ink:#191B1D; --muted:#6E7276; --line:rgba(25,27,29,0.10);
+  --brand:#146356; --brand-tint:#E4EFEC;
+  --c-economia:#B4722B; --c-seguridad:#A8323D; --c-diplomacia:#5C4F94; --c-latam:#2E7D53;
   padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
-  box-sizing:border-box;
 }
-@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --ink:#eee; --paper:#161513; --rule:#eee; --gray:#bbb; --muted:#888; } }
-:root[data-theme="dark"]{ --ink:#eee; --paper:#161513; --rule:#eee; --gray:#bbb; --muted:#888; }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --paper:#15181A; --ink:#EDEEEC; --muted:#9BA0A3; --line:rgba(237,238,236,0.12);
+  --brand:#4FB3A0; --brand-tint:#1B2C29;
+} }
+:root[data-theme="dark"]{
+  --paper:#15181A; --ink:#EDEEEC; --muted:#9BA0A3; --line:rgba(237,238,236,0.12);
+  --brand:#4FB3A0; --brand-tint:#1B2C29;
+}
 *{box-sizing:border-box;}
-html{scroll-padding-top:env(safe-area-inset-top,0px);}
-body{background:var(--paper); color:var(--ink); font-family:'Georgia','Times New Roman',serif; margin:0; padding:0 16px 60px; max-width:760px; margin-inline:auto;}
-header.masthead{text-align:center; border-bottom:3px double var(--rule); padding:22px 0 12px;}
-.kicker{font-family:Arial,Helvetica,sans-serif; letter-spacing:2px; font-size:11px; color:var(--accent); text-transform:uppercase; margin-bottom:6px;}
-h1.title{font-size:44px; margin:0; letter-spacing:-0.5px; font-weight:400;}
-.dateline{font-family:Arial,Helvetica,sans-serif; font-size:12px; color:var(--gray); margin-top:8px; display:flex; justify-content:space-between; border-top:1px solid var(--muted); padding-top:6px;}
-section{margin-top:34px;}
-h2.section-head{font-family:Arial,Helvetica,sans-serif; font-size:13px; letter-spacing:2px; text-transform:uppercase; color:var(--accent); border-bottom:2px solid var(--rule); padding-bottom:6px; margin-bottom:16px;}
-article.story{margin-bottom:26px; padding-bottom:22px; border-bottom:1px solid var(--muted);}
-article.story:last-child{border-bottom:none;}
-h3.headline{font-size:24px; font-weight:400; margin:0 0 8px; line-height:1.25;}
-p.dek{color:var(--gray); font-size:15px; margin:0 0 8px; font-style:italic;}
-p.body{font-size:16px; line-height:1.55; margin:0;}
-.tag{font-family:Arial,Helvetica,sans-serif; font-size:10px; letter-spacing:1px; text-transform:uppercase; color:var(--muted);}
-.lead{font-size:26px !important;}
-.threethings{margin-top:46px; padding:24px; border:2px solid var(--rule); background:transparent;}
-.threethings h2{font-family:Arial,Helvetica,sans-serif; font-size:15px; letter-spacing:1px; margin:0 0 14px; text-transform:uppercase; color:var(--accent);}
-.threethings ol{margin:0; padding-left:20px; font-size:17px; line-height:1.6;}
-.threethings li{margin-bottom:10px;}
-footer{text-align:center; margin-top:40px; font-family:Arial,Helvetica,sans-serif; font-size:11px; color:var(--muted);}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 12px);}
+body{background:var(--paper); color:var(--ink); font-family:Georgia,'Times New Roman',serif; margin:0; padding:0 22px 80px; max-width:700px; margin-inline:auto; line-height:1.6;}
+header.masthead{padding:44px 0 20px;}
+.wordmark{font-family:Georgia,serif; font-weight:400; font-style:normal; font-size:38px; margin:0; color:var(--ink); letter-spacing:-0.3px;}
+.dateline{font-family:Arial,Helvetica,sans-serif; font-size:13px; color:var(--muted); margin-top:10px;}
+.legend{display:flex; flex-wrap:wrap; gap:18px; margin-top:26px; padding-top:20px; border-top:1px solid var(--line);}
+.legend a{display:flex; align-items:center; gap:7px; font-family:Arial,Helvetica,sans-serif; font-size:13px; color:var(--muted); text-decoration:none;}
+.legend .dot{width:8px; height:8px; border-radius:50%; display:inline-block;}
+section{margin-top:64px; scroll-margin-top:20px;}
+h2.section-head{font-family:Arial,Helvetica,sans-serif; font-size:14px; font-weight:700; margin:0 0 28px; display:flex; align-items:center; gap:9px;}
+h2.section-head .dot{width:9px; height:9px; border-radius:50%; display:inline-block; flex-shrink:0;}
+article.story{margin-bottom:52px;}
+article.story:last-child{margin-bottom:0;}
+.tag{font-family:Arial,Helvetica,sans-serif; font-size:12px; font-weight:700; margin-bottom:10px; display:block;}
+h3.headline{font-family:Georgia,serif; font-weight:400; font-size:26px; margin:0 0 10px; line-height:1.28; max-width:34ch;}
+h3.headline.lead{font-size:31px;}
+p.dek{font-family:Georgia,serif; font-style:italic; color:var(--muted); font-size:16px; margin:0 0 14px; max-width:58ch;}
+p.body{font-size:16px; line-height:1.75; margin:0 0 14px; max-width:62ch; color:var(--ink);}
+p.body:last-child{margin-bottom:0;}
+.threethings{margin-top:72px; padding:36px 30px; background:var(--brand); color:#fff; border-radius:2px;}
+.threethings h2{font-family:Arial,Helvetica,sans-serif; font-size:14px; font-weight:700; margin:0 0 22px; opacity:0.85;}
+.threethings ol{margin:0; padding:0; list-style:none; counter-reset:tt;}
+.threethings li{counter-increment:tt; margin-bottom:20px; padding-left:38px; position:relative; font-size:16px; line-height:1.6;}
+.threethings li:last-child{margin-bottom:0;}
+.threethings li::before{content:counter(tt); position:absolute; left:0; top:-2px; font-family:Georgia,serif; font-size:22px; font-weight:700; opacity:0.6;}
+.threethings strong{font-weight:600;}
+footer{margin-top:56px; padding-top:20px; border-top:1px solid var(--line); font-family:Arial,Helvetica,sans-serif; font-size:13px; color:var(--muted);}
+.closing-line{margin-top:14px; font-family:Georgia,serif; font-style:italic; font-size:14px; color:var(--ink); text-align:center;}
 </style>
 </head>
 <body>
-
 <header class="masthead">
-  <div class="kicker">Edición del corresponsal</div>
-  <h1 class="title">GEOJOURNAL</h1>
-  <div class="dateline">
-    <span>SÁBADO, 26 DE SEPTIEMBRE DE 2026</span>
-    <span>ÚLTIMAS 24 HORAS</span>
-  </div>
+  <p class="wordmark">Geojournalnews</p>
+  <p class="dateline">Sábado, 26 de septiembre de 2026 · resumen de las últimas 24 horas</p>
+  <nav class="legend">
+    <a href="#economia"><span class="dot" style="background:var(--c-economia)"></span>Economía</a>
+    <a href="#seguridad"><span class="dot" style="background:var(--c-seguridad)"></span>Seguridad</a>
+    #diplomacia"><span class="dot" style="background:var(--c-diplomacia)"></span>Diplomacia</a>
+    #latam"><span class="dot" style="background:var(--c-latam)"></span>América Latina</a>
+  </nav>
 </header>
 
-<section>
-  <h2 class="section-head">Economía global &amp; geopolítica</h2>
+<section id="economia">
+  <h2 class="section-head"><span class="dot" style="background:var(--c-economia)"></span>Economía global y geopolítica</h2>
   <article class="story">
-    <span class="tag">Washington · Pekín</span>
-    <h3 class="headline lead">EE.UU. y China acuerdan recortar aranceles por 30.000 millones de dólares tras la cumbre Trump–Xi</h3>
-    <p class="dek">Pekín confirma un paquete de ocho puntos que incluye un diálogo bilateral sobre inteligencia artificial y un consejo comercial conjunto.</p>
-    <p class="body">Al cierre de la visita de estado de tres días de Xi Jinping a Washington —la primera de un líder chino a Estados Unidos desde 2023—, ambos gobiernos anunciaron una reducción recíproca de aranceles sobre bienes considerados "no sensibles": productos agrícolas, mariscos, madera, cosméticos, dispositivos médicos, electrodomésticos pequeños, juguetes, decoraciones navideñas y sillas de auto para niños. Según la Casa Blanca, el paquete forma parte de un consenso de ocho puntos alcanzado durante la cumbre, que también incluye la creación de un consejo comercial conjunto y la extensión de los acuerdos previos negociados en Kuala Lumpur. China, por su parte, se comprometió a reanudar de inmediato y de forma sustancial la importación de soja y otros productos agrícolas estadounidenses —hasta 10 millones de toneladas métricas—, además de reforzar la cooperación contra el tráfico de fentanilo.</p>
-    <p class="body">Más allá de lo económico, Trump y Xi acordaron respaldarse mutuamente en la organización de las próximas cumbres del Foro de Cooperación Económica Asia-Pacífico (APEC) y del G20, con planes de que cada líder asista a la reunión organizada por el otro. En materia de política exterior, ambos coincidieron en que Irán debe cumplir su compromiso de no desarrollar armas nucleares y en que ningún país o entidad debería imponer peajes de tránsito en vías navegables internacionales —una referencia apenas velada a la crisis del estrecho de Ormuz—. El punto más espinoso de la disputa bilateral, el control chino sobre las exportaciones de tierras raras, quedó fuera del comunicado oficial, lo que sugiere que las negociaciones de fondo continúan. El comercio total entre ambas potencias cayó casi un 30% en 2025 y sigue en descenso este año, aunque China se mantiene como el tercer socio comercial de Washington, solo detrás de México y Canadá.</p>
+    <span class="tag" style="color:var(--c-economia)">Washington · Teherán</span>
+    <h3 class="headline lead">Trump rechaza el plan iraní de siete días para reabrir Ormuz</h3>
+    <p class="dek">El estrecho sigue siendo el punto más sensible para el suministro mundial de energía.</p>
+    <p class="body">Según funcionarios estadounidenses citados por la prensa, Trump descartó la propuesta de Irán que vinculaba la reapertura del estrecho de Ormuz con el fin de la presión militar de Estados Unidos, cambios en las sanciones y el levantamiento del bloqueo a los puertos iraníes.</p><p class="body">Trump sostiene que Teherán quiere un acuerdo, pero duda de que cumpla las exigencias sobre su programa nuclear. El presidente iraní, Masud Pezeshkian, mantiene señales de apertura al diálogo, aunque la desconfianza entre ambos gobiernos sigue siendo profunda.</p>
   </article>
   <article class="story">
-    <span class="tag">Mercados de energía</span>
-    <h3 class="headline">El petróleo se divide: el Brent roza los 104 dólares mientras el WTI cae por las esperanzas de tregua con Irán</h3>
-    <p class="body">El contrato de noviembre de Brent —la referencia que fija el precio de la mayoría de los cargamentos mundiales— cerró la semana en 104,32 dólares por barril, un alza del 0,43% impulsada por el riesgo de suministro en Oriente Medio. El WTI, en cambio, hizo el camino inverso: retrocedió un 3,82% en la semana hasta los 92,41 dólares, arrastrado por las expectativas de que Washington y Teherán logren desactivar la crisis antes de que se agrave. Esa divergencia entre ambos crudos —poco habitual en momentos de tensión generalizada— refleja hasta qué punto los mercados están tratando la amenaza sobre el estrecho de Ormuz como un riesgo real pero todavía no consumado.</p>
-    <p class="body">El impacto no es abstracto: países importadores como Pakistán, que ya enfrenta una crisis política interna, sienten de inmediato cualquier variación en el costo de la energía, lo que a su vez alimenta el malestar social y presiona a gobiernos que dependen de subsidios o de reservas de divisas limitadas. Analistas de mercado señalan que un cierre prolongado o parcial de Ormuz —por donde transita cerca de una quinta parte del petróleo mundial— tendría un efecto en cadena sobre la inflación global, justo cuando varios bancos centrales intentan consolidar el descenso de los precios tras los shocks de los últimos años.</p>
-  </article>
-</section>
-
-<section>
-  <h2 class="section-head">Seguridad internacional</h2>
-  <article class="story">
-    <span class="tag">Golfo Pérsico · Oriente Medio</span>
-    <h3 class="headline lead">Irán da a Washington un ultimátum de cinco días para reabrir el estrecho de Ormuz</h3>
-    <p class="dek">Teherán insiste en que no volverá a la mesa de negociación ni levantará las restricciones al tránsito naval hasta que EE.UU. acepte sus condiciones.</p>
-    <p class="body">La guerra que comenzó el 28 de febrero de 2026, cuando Estados Unidos e Israel lanzaron ataques coordinados contra infraestructura militar y nuclear iraní, entra ya en su séptimo mes sin resolución definitiva. Un primer alto el fuego negociado en abril derivó en junio en el llamado Memorando de Islamabad, mediado por Pakistán, que establecía un período de 60 días para negociar un acuerdo final. Ese proceso colapsó semanas después, en medio de la reanudación de los combates, y expiró formalmente en agosto. Desde entonces, Washington y Teherán intercambian ataques de baja intensidad mientras Estados Unidos refuerza una campaña de sanciones y mantiene un bloqueo naval sobre las exportaciones iraníes.</p>
-    <p class="body">Esta semana, Irán presentó ante la Asamblea General de la ONU una hoja de ruta que contempla un alto el fuego regional de hasta 60 días, la reapertura escalonada del estrecho de Ormuz y el fin del bloqueo estadounidense, a cambio de garantías sobre su programa nuclear. El secretario del Consejo Supremo de Seguridad Nacional iraní, Mohsen Rezaei, reiteró que Teherán no reanudará conversaciones ni reabrirá el estrecho hasta que Washington acepte sus términos, y fijó un plazo de cinco días para una respuesta. La Casa Blanca no ha respondido públicamente a la propuesta, aunque fuentes citadas por agencias internacionales sugieren que el equipo negociador estadounidense evalúa retomar el diálogo antes de las elecciones legislativas de noviembre en Estados Unidos.</p>
+    <span class="tag" style="color:var(--c-economia)">Washington · Ciudad de México</span>
+    <h3 class="headline">La Fed sube tasas y el T-MEC sigue sin renovarse</h3>
+    <p class="body">La Reserva Federal elevó su tasa de interés en 25 puntos básicos, lo que fortaleció al dólar. El peso mexicano recuperó algo de terreno este sábado y cotizó en torno a 17,68 por dólar, aunque cerró su peor semana desde marzo.</p><p class="body">Washington no ha firmado la renovación del T-MEC, y las autoridades mexicanas admiten que el nuevo acuerdo podría no concretarse antes de fin de mes.</p>
   </article>
   <article class="story">
-    <span class="tag">Líbano</span>
-    <h3 class="headline">Israel golpea un depósito de armas de Hezbolá en el sur de Líbano</h3>
-    <p class="body">Las fuerzas israelíes reportaron un ataque contra un almacén de armamento de Hezbolá en la zona de Sejoud, dentro de lo que Israel denomina "zona de seguridad" del sur libanés, alegando que el sitio se utilizaba para almacenar material destinado a atacar a sus tropas. El ejército israelí insistió en que "cualquier uso de la fuerza desde territorio libanés para dañar a civiles israelíes o soldados de las FDI recibirá una respuesta contundente", al tiempo que aseguró seguir comprometido con el acuerdo de tregua vigente desde junio entre Israel y Líbano, que contempla el desarme de Hezbolá —una condición que la milicia rechazó desde el primer momento—.</p>
-    <p class="body">Ante la Asamblea General de la ONU, el primer ministro libanés, Nawaf Salam, exigió la retirada total de las tropas israelíes de las zonas ocupadas y advirtió que su país fue "arrastrado" a un conflicto regional que no eligió. La persistencia de ataques puntuales, pese al acuerdo formal de junio, ilustra la fragilidad de las treguas que Washington ha negociado en la región durante el último año: pausas que logran reducir la intensidad de la violencia sin resolver las disputas de fondo sobre desarme y soberanía territorial.</p>
-  </article>
-  <article class="story">
-    <span class="tag">Pakistán</span>
-    <h3 class="headline">Islamabad, sellada durante dos semanas, aplaza una marcha opositora al 4 de octubre</h3>
-    <p class="body">Durante casi dos semanas, Islamabad permaneció prácticamente sellada con contenedores de carga apilados en sus principales accesos, una medida de seguridad destinada a impedir el ingreso de una marcha opositora de gran escala. Solo el alquiler de esos contenedores le costó al Estado paquistaní cerca de 46,5 millones de rupias diarias —unos 168.000 dólares—, según cálculos locales, en un país que atraviesa una delicada situación fiscal. Finalmente, los organizadores de la protesta aceptaron posponerla hasta el 4 de octubre, lo que reduce la tensión inmediata pero deja intacto el conflicto político de fondo entre el gobierno y la oposición.</p>
-    <p class="body">El episodio se produce en un contexto económico particularmente adverso: como país fuertemente dependiente de la importación de crudo, Pakistán es uno de los más expuestos a la reciente divergencia entre el Brent y el WTI, y cualquier repunte sostenido de los precios internacionales de la energía se traduce rápidamente en presión inflacionaria interna y en mayor descontento social, alimentando precisamente el tipo de movilizaciones que el gobierno buscó contener esta semana.</p>
+    <span class="tag" style="color:var(--c-economia)">Mar Rojo · Canal de Panamá</span>
+    <h3 class="headline">Cuellos de botella logísticos amenazan con encarecer la Navidad</h3>
+    <p class="body">El conflicto en Oriente Próximo y la sequía en el Canal de Panamá se perfilan como los principales riesgos para las cadenas de suministro antes de las fiestas de fin de año.</p><p class="body">Para los importadores de Centroamérica, esto puede traducirse en fletes más caros y tiempos de tránsito más largos en las próximas semanas.</p>
   </article>
 </section>
 
-<section>
-  <h2 class="section-head">Tensiones diplomáticas</h2>
+<section id="seguridad">
+  <h2 class="section-head"><span class="dot" style="background:var(--c-seguridad)"></span>Seguridad internacional</h2>
   <article class="story">
-    <span class="tag">Naciones Unidas</span>
-    <h3 class="headline">Netanyahu y Pezeshkian chocan en la Asamblea General</h3>
-    <p class="body">En discursos consecutivos ante la 81ª sesión de la Asamblea General, el presidente iraní, Masoud Pezeshkian, insistió en que su país "no será intimidado" por la acción militar ni por las sanciones, y que mantendrá su programa nuclear pese a las presiones internacionales, en lo que varios medios describieron como un discurso desafiante pronunciado por un mandatario cuyo país sigue formalmente en guerra con Estados Unidos e Israel. Horas antes, el primer ministro israelí, Benjamín Netanyahu, había realizado uno de los viajes más breves de su gestión a Nueva York —sin reunión bilateral con Trump— para anticipar ante el plenario lo que calificó como la inminente caída del régimen iraní.</p>
-    <p class="body">En paralelo, y en un gesto leído por analistas como parte de la disputa geopolítica por el control del Ártico, Trump firmó durante la misma sesión un pacto de seguridad trilateral entre Estados Unidos, Dinamarca y Groenlandia. La superposición de estos anuncios —la guerra en Oriente Medio, la rivalidad ártica y la distensión comercial con China— confirma que la diplomacia estadounidense se mueve simultáneamente en varios tableros, sin que ninguno de ellos parezca tener prioridad absoluta sobre los demás.</p>
+    <span class="tag" style="color:var(--c-seguridad)">Kiev · Zaporiyia · Krasnodar</span>
+    <h3 class="headline lead">Rusia lanza 173 drones sobre Ucrania; al menos seis muertos</h3>
+    <p class="dek">Ucrania responde con un ataque contra una refinería en el sur de Rusia.</p>
+    <p class="body">Los ataques de la madrugada dejaron al menos seis muertos y decenas de heridos en varias regiones de Ucrania. En Zaporiyia murieron una madre y una abuela de la misma familia en su vivienda.</p><p class="body">Medios locales informaron de un ataque con drones contra la refinería de Ilsky, en Krasnodar, donde se declaró un incendio. Putin afirmó que Moscú no se prepara para un conflicto con Europa, mientras varios países europeos denuncian más ataques híbridos atribuidos a Rusia.</p>
   </article>
   <article class="story">
-    <span class="tag">Ucrania · Rusia</span>
-    <h3 class="headline">La guerra sigue sin tregua pese a la presión diplomática de Washington</h3>
-    <p class="body">Los intentos de Kiev, Moscú y los enviados especiales de Washington —entre ellos Jared Kushner y Steve Witkoff, quienes viajaron primero a Moscú y luego a Kiev para intentar reactivar el proceso— continúan sin traducirse en avances concretos. Las rondas de conversaciones celebradas a lo largo del año, incluidas las mantenidas en Abu Dabi a comienzos de año, permitieron acuerdos puntuales como intercambios de prisioneros, pero no lograron acercar las posiciones de fondo: Moscú exige que Ucrania ceda el control de las principales ciudades en disputa y reduzca drásticamente su capacidad militar, condiciones que Kiev ha rechazado de forma reiterada.</p>
-    <p class="body">Mientras tanto, ambos ejércitos han intensificado los ataques con drones sobre infraestructura civil y energética, y el propio presidente Volodímir Zelenski enfrenta además tensiones internas, después de que los servicios de seguridad ucranianos allanaran el organismo anticorrupción del país por sospechas de colusión con Rusia. Estados Unidos mantiene la amenaza de imponer sanciones "muy significativas" —incluidos aranceles secundarios de hasta el 100% a países que comercien con Rusia— si Moscú no muestra voluntad real de llegar a un acuerdo, aunque hasta ahora esa presión no ha modificado sustancialmente la dinámica del conflicto.</p>
+    <span class="tag" style="color:var(--c-seguridad)">Riad · Khamis Mushait</span>
+    <h3 class="headline">Arabia Saudí intercepta drones hutíes y un misil balístico</h3>
+    <p class="body">Las defensas saudíes derribaron este sábado dos drones lanzados desde Yemen hacia la región de Riad y un misil dirigido contra Khamis Mushait, donde hay una importante base aérea. El Consejo de Cooperación del Golfo condenó los ataques.</p><p class="body">Ante la ONU, Riad pidió proteger la libertad de navegación en Ormuz y Bab el Mandeb, dos pasos clave para el comercio mundial de energía.</p>
   </article>
   <article class="story">
-    <span class="tag">Vaticano · Francia</span>
-    <h3 class="headline">El papa León XIV advierte sobre un "paraíso de máquinas" durante su visita a París</h3>
-    <p class="body">En un encuentro con el presidente francés Emmanuel Macron en el Palacio del Elíseo, el pontífice expresó su preocupación por el avance acelerado de la inteligencia artificial, advirtiendo sobre el riesgo de que la humanidad construya, en sus palabras, un "paraíso de máquinas" que termine erosionando la dignidad humana. León XIV vinculó esa advertencia con otras dos amenazas que, dijo, avanzan en paralelo: la proliferación de armamento nuclear en un momento de creciente rivalidad entre potencias, y el retroceso de los derechos humanos en distintas regiones del mundo golpeadas por conflictos armados.</p>
-    <p class="body">Aunque se trata de una intervención de carácter moral y no de una acción diplomática formal, el mensaje del papa se suma a un coro cada vez más amplio de voces —desde organismos multilaterales hasta gobiernos europeos— que reclaman marcos internacionales más firmes para regular tanto la inteligencia artificial como el rearme, justo en la misma semana en que Washington y Pekín anunciaron la apertura de un diálogo bilateral sobre IA como parte de su acuerdo comercial.</p>
+    <span class="tag" style="color:var(--c-seguridad)">La Habana · Nueva York</span>
+    <h3 class="headline">Cuba califica el bloqueo energético como un acto de guerra</h3>
+    <p class="body">El canciller cubano denunció ante la Asamblea General de la ONU que más de 7.000 contenedores con alimentos, medicinas y equipos médicos están retenidos en puertos de terceros países.</p><p class="body">La Habana lo describe como un castigo colectivo y advierte de una amenaza latente de uso de la fuerza militar contra la isla.</p>
+  </article>
+</section>
+
+<section id="diplomacia">
+  <h2 class="section-head"><span class="dot" style="background:var(--c-diplomacia)"></span>Tensiones diplomáticas</h2>
+  <article class="story">
+    <span class="tag" style="color:var(--c-diplomacia)">Nueva York · Moscú</span>
+    <h3 class="headline lead">Lavrov propone una nueva arquitectura de seguridad euroasiática</h3>
+    <p class="body">El canciller ruso anunció los trabajos de una carta euroasiática sobre diversidad y multipolaridad, y acusó a Europa de frustrar las negociaciones de paz en Ucrania. También condenó la captura de Maduro y la muerte de Jamenei.</p><p class="body">Respaldó que Brasil e India tengan un asiento permanente en el Consejo de Seguridad, pero rechazó esa posibilidad para Alemania y Japón.</p>
+  </article>
+  <article class="story">
+    <span class="tag" style="color:var(--c-diplomacia)">Nueva York · Caracas</span>
+    <h3 class="headline">Trump se reúne con Delcy Rodríguez en su regreso a la ONU</h3>
+    <p class="body">La presidenta encargada de Venezuela agradeció el respaldo de Washington a la reinserción internacional de su país.</p><p class="body">Mientras tanto, en Venezuela hubo protestas para exigir el regreso de María Corina Machado, y en Caracas fue detenido el exviceministro chavista Alexander Vargas.</p>
+  </article>
+  <article class="story">
+    <span class="tag" style="color:var(--c-diplomacia)">Buenos Aires · Nueva York</span>
+    <h3 class="headline">Milei exige reanudar las negociaciones por las Malvinas</h3>
+    <p class="body">El presidente argentino pidió retomar el diálogo sobre la soberanía de las islas y criticó con dureza a la ONU, a la que calificó de estructura inútil.</p><p class="body">Su intervención se suma a una Asamblea General dominada por las guerras en Oriente Medio y Ucrania.</p>
+  </article>
+  <article class="story">
+    <span class="tag" style="color:var(--c-diplomacia)">París</span>
+    <h3 class="headline">León XIV reúne a multitudes en su primera visita oficial a Francia</h3>
+    <p class="body">Cientos de miles de fieles llenaron los Campos Elíseos para escuchar al papa. Es la primera visita oficial de un pontífice a Francia en 18 años.</p><p class="body">Las autoridades desplegaron unos 14.000 policías y gendarmes para garantizar la seguridad.</p>
+  </article>
+</section>
+
+<section id="latam">
+  <h2 class="section-head"><span class="dot" style="background:var(--c-latam)"></span>Impacto en América Latina y Nicaragua</h2>
+  <article class="story">
+    <span class="tag" style="color:var(--c-latam)">Managua · Nueva York</span>
+    <h3 class="headline lead">Nicaragua ante la ONU: el narcotráfico es una forma de terrorismo</h3>
+    <p class="body">El representante nicaragüense, Valdrack Jaentschke, definió el narcotráfico y el crimen organizado como formas de terrorismo.</p><p class="body">También destacó la fuerza de los BRICS frente a lo que considera los grandes males de esta época.</p>
+  </article>
+  <article class="story">
+    <span class="tag" style="color:var(--c-latam)">Managua</span>
+    <h3 class="headline">Avanza la consulta de las reformas constitucionales</h3>
+    <p class="body">La copresidenta Rosario Murillo destacó el respaldo de más de 14 partidos a las reformas, aprobadas en primera legislatura. Estas fijan periodos de siete años para los cargos de elección popular y para las jefaturas del Ejército y la Policía.</p><p class="body">También establecen el 18 de enero como fecha de toma de posesión, declaran sin efecto en Nicaragua las leyes de otros Estados u organismos internacionales y restringen el acceso a cargos públicos de quienes promuevan la injerencia extranjera.</p>
+  </article>
+  <article class="story">
+    <span class="tag" style="color:var(--c-latam)">Nicaragua · Exilio</span>
+    <h3 class="headline">Suben a 68 los presos políticos, 31 de ellos desaparecidos</h3>
+    <p class="body">La Asociación Memoria y Justicia por Nicaragua documentó, al 24 de septiembre, a 53 hombres y 15 mujeres encarcelados por motivos políticos, ocho más que en julio. Quince de ellos son adultos mayores.</p><p class="body">La lista incluye a seis familiares del fallecido exdiputado miskito Brooklyn Rivera. La organización contabiliza 1.506 detenciones políticas en los últimos ocho años.</p>
   </article>
 </section>
 
 <div class="threethings">
   <h2>Si solo recuerdas tres cosas de hoy, son estas:</h2>
   <ol>
-    <li><strong>Washington y Pekín bajan la tensión comercial:</strong> tras la cumbre Trump–Xi, acordaron recortar aranceles por 30.000 millones de dólares y abrir un diálogo sobre inteligencia artificial, aunque el punto más duro —las tierras raras— sigue sin resolverse.</li>
-    <li><strong>Irán presiona con un ultimátum sobre Ormuz:</strong> da cinco días a EE.UU. para aceptar sus condiciones y reabrir el estrecho, mientras la guerra regional entra en su séptimo mes sin fin a la vista.</li>
-    <li><strong>El petróleo revela el nerviosismo global:</strong> el Brent sube por el riesgo en Oriente Medio y el WTI baja por las esperanzas de tregua, una divergencia que ya golpea a economías importadoras como Pakistán.</li>
+    <li><strong>Ormuz sigue cerrado a la diplomacia:</strong> el rechazo de Trump al plan iraní mantiene la presión sobre el petróleo y los combustibles.</li>
+    <li><strong>El dólar se fortalece:</strong> la subida de la Fed y la falta de acuerdo sobre el T-MEC encarecen el crédito y presionan a las monedas de la región.</li>
+    <li><strong>Nicaragua se blinda:</strong> reformas con periodos de siete años y un discurso en la ONU alineado con los BRICS, mientras crece la cifra de presos políticos.</li>
   </ol>
 </div>
-
-<footer>Resumen elaborado a partir de fuentes internacionales — Reuters, Al Jazeera, CNBC, Axios, NPR, The Jerusalem Post.</footer>
-
+<footer>Resumen elaborado automáticamente a partir de fuentes internacionales.
+  <p class="closing-line">Por la prensa libre sin miramientos y sin dueños</p>
+</footer>
 </body>
 </html>
