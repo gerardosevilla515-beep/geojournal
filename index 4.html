@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="es" class="nojs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GEOJOURNALNEWS — Resumen Global</title>
+<meta name="description" content="Geojournalnews: 20 noticias diarias de economía, seguridad, diplomacia, América Latina, mundo, cultura y deportes.">
+<style>
+:root{
+  --paper:#F5F6F1; --card:#FFFFFF; --ink:#191B1D; --muted:#6E7276; --line:rgba(25,27,29,0.10);
+  --brand:#146356; --up:#1E8A4C; --down:#B3261E;
+  --c-economia:#B4722B; --c-seguridad:#A8323D; --c-diplomacia:#5C4F94; --c-latam:#2E7D53;
+  --c-mundo:#2B6CB0; --c-cultura:#9C4F8C; --c-deportes:#C0561B;
+  --fs:16px;
+}
+:root[data-theme="dark"]{
+  --paper:#15181A; --card:#1D2124; --ink:#EDEEEC; --muted:#9BA0A3; --line:rgba(237,238,236,0.12);
+  --brand:#4FB3A0; --up:#4CC37F; --down:#F2726A;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--paper); color:var(--ink); font-family:Georgia,'Times New Roman',serif; margin:0; line-height:1.6; font-size:var(--fs); transition:background .3s,color .3s;}
+.wrap{max-width:1080px; margin:0 auto; padding:0 20px 90px;}
+.sans{font-family:Arial,Helvetica,sans-serif;}
+#progress{position:fixed; top:0; left:0; height:3px; width:0; background:var(--brand); z-index:50;}
+
+/* Barra superior */
+.topbar{position:sticky; top:0; z-index:40; background:var(--paper); border-bottom:1px solid var(--line);}
+.topbar .inner{max-width:1080px; margin:0 auto; padding:10px 20px; display:flex; align-items:center; gap:10px;}
+.topbar .mini{font-size:18px; flex:1;}
+.btn{font-family:Arial,Helvetica,sans-serif; font-size:13px; border:1px solid var(--line); background:var(--card); color:var(--ink); padding:7px 11px; border-radius:20px; cursor:pointer;}
+.btn:hover{border-color:var(--brand);}
+
+/* Cotizaciones en movimiento */
+.ticker{overflow:hidden; border-bottom:1px solid var(--line); background:var(--card);}
+.ticker .track{display:inline-flex; gap:34px; padding:9px 0; white-space:nowrap; animation:scroll 55s linear infinite;}
+.ticker:hover .track{animation-play-state:paused;}
+.tk{font-family:Arial,Helvetica,sans-serif; font-size:13px;}
+.tk b{margin-right:6px;}
+.up{color:var(--up);} .down{color:var(--down);}
+@keyframes scroll{from{transform:translateX(0)} to{transform:translateX(-50%)}}
+
+header.masthead{padding:40px 0 18px; text-align:center;}
+.wordmark{font-size:46px; margin:0; letter-spacing:-0.5px;}
+.dateline{font-family:Arial,Helvetica,sans-serif; font-size:13px; color:var(--muted); margin-top:8px;}
+
+/* Filtros y búsqueda */
+.controls{display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin:22px 0 8px;}
+.chip{font-family:Arial,Helvetica,sans-serif; font-size:13px; padding:7px 13px; border-radius:20px; border:1px solid var(--line); background:var(--card); color:var(--ink); cursor:pointer; display:flex; align-items:center; gap:7px;}
+.chip .dot{width:8px; height:8px; border-radius:50%;}
+.chip.active{background:var(--ink); color:var(--paper);}
+.search{display:flex; justify-content:center; margin:10px 0 4px;}
+.search input{width:100%; max-width:460px; padding:10px 16px; border-radius:24px; border:1px solid var(--line); background:var(--card); color:var(--ink); font-size:14px; font-family:Arial,Helvetica,sans-serif;}
+.count{text-align:center; font-family:Arial,Helvetica,sans-serif; font-size:12px; color:var(--muted); margin-top:8px;}
+
+/* Mercados */
+.markets{margin-top:36px; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:26px;}
+.markets h2{font-family:Arial,Helvetica,sans-serif; font-size:15px; margin:0 0 4px; display:flex; align-items:center; gap:9px;}
+.markets .sub{font-family:Arial,Helvetica,sans-serif; font-size:12px; color:var(--muted); margin:0 0 18px;}
+.mgrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:12px;}
+.mcard{border:1px solid var(--line); border-radius:8px; padding:12px 14px; font-family:Arial,Helvetica,sans-serif;}
+.mcard .n{font-size:12px; color:var(--muted);}
+.mcard .v{font-size:19px; font-weight:700; margin:3px 0;}
+.mcard .c{font-size:13px; font-weight:700;}
+.outlook{margin-top:22px; display:grid; grid-template-columns:1fr 1fr; gap:22px;}
+.outlook h3{font-family:Arial,Helvetica,sans-serif; font-size:13px; margin:0 0 8px; text-transform:uppercase; letter-spacing:.5px; color:var(--muted);}
+.outlook p,.outlook li{font-size:15px; line-height:1.65;}
+.outlook ul{padding-left:18px; margin:0;}
+.note{font-family:Arial,Helvetica,sans-serif; font-size:12px; color:var(--muted); margin-top:14px; border-top:1px solid var(--line); padding-top:10px;}
+
+/* Noticias */
+.grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:22px; margin-top:34px;}
+.story{background:var(--card); border:1px solid var(--line); border-radius:10px; overflow:hidden; display:flex; flex-direction:column; transition:transform .2s, box-shadow .2s;}
+.story:hover{transform:translateY(-3px); box-shadow:0 10px 26px rgba(0,0,0,.08);}
+.story.featured{grid-column:1/-1;}
+.cover{height:170px; position:relative; display:flex; align-items:center; justify-content:center; overflow:hidden;}
+.story.featured .cover{height:260px;}
+.cover .place{position:absolute; left:14px; bottom:12px; font-family:Arial,Helvetica,sans-serif; font-size:12px; font-weight:700; color:#fff; background:rgba(0,0,0,.35); padding:4px 9px; border-radius:12px;}
+.cover .cat{position:absolute; right:14px; top:12px; font-family:Arial,Helvetica,sans-serif; font-size:11px; font-weight:700; color:#fff; background:rgba(0,0,0,.30); padding:4px 9px; border-radius:12px; text-transform:uppercase; letter-spacing:.5px;}
+.content{padding:20px 22px 18px; display:flex; flex-direction:column; flex:1;}
+.headline{font-weight:400; font-size:23px; line-height:1.28; margin:0 0 10px;}
+.story.featured .headline{font-size:32px;}
+.dek{font-style:italic; color:var(--muted); margin:0 0 12px;}
+.body p{margin:0 0 12px; line-height:1.75;}
+.more{display:block;}
+.js .more{display:none;}
+.js .story.open .more{display:block;}
+.nojs .actions .btn{display:none;}
+.actions{margin-top:auto; display:flex; gap:8px; align-items:center; padding-top:8px;}
+.src{font-family:Arial,Helvetica,sans-serif; font-size:11px; color:var(--muted); margin-left:auto; text-align:right; line-height:1.5;}
+.src a,.note a{color:var(--brand); text-decoration:none; font-weight:700;}
+.src a:hover,.note a:hover{text-decoration:underline;}
+.cover .ico{position:absolute; left:16px; top:14px; opacity:.35;}
+.cover .ico svg{width:46px; height:46px;}
+.story.featured .cover .ico svg{width:60px; height:60px;}
+.cover .flags{display:flex; gap:16px; align-items:center; justify-content:center; z-index:1;}
+.cover img.flag{width:auto; height:88px; max-width:150px; object-fit:contain; border-radius:4px; box-shadow:0 6px 18px rgba(0,0,0,.35); transition:transform .3s;}
+.story:hover .cover img.flag{transform:scale(1.05);}
+.story.featured .cover img.flag{height:130px; max-width:220px;}
+.cover .flags:empty + *{display:none;}
+.empty{text-align:center; color:var(--muted); font-family:Arial,Helvetica,sans-serif; padding:40px 0; display:none;}
+
+/* Tres cosas */
+.threethings{margin-top:60px; padding:34px 30px; background:var(--brand); color:#fff; border-radius:10px;}
+.threethings h2{font-family:Arial,Helvetica,sans-serif; font-size:14px; margin:0 0 20px; opacity:.9;}
+.threethings ol{margin:0; padding:0; list-style:none; counter-reset:tt;}
+.threethings li{counter-increment:tt; margin-bottom:18px; padding-left:38px; position:relative; line-height:1.6;}
+.threethings li::before{content:counter(tt); position:absolute; left:0; top:-3px; font-size:24px; font-weight:700; opacity:.6;}
+footer{margin-top:50px; padding-top:20px; border-top:1px solid var(--line); font-family:Arial,Helvetica,sans-serif; font-size:13px; color:var(--muted); text-align:center;}
+.closing-line{margin-top:12px; font-family:Georgia,serif; font-style:italic; font-size:15px; color:var(--ink);}
+#toTop{position:fixed; right:18px; bottom:22px; display:none; z-index:45;}
+#toast{position:fixed; left:50%; bottom:24px; transform:translateX(-50%); background:var(--ink); color:var(--paper); padding:9px 16px; border-radius:20px; font-family:Arial,Helvetica,sans-serif; font-size:13px; display:none; z-index:60;}
+@media (max-width:640px){
+  .wordmark{font-size:36px;} .outlook{grid-template-columns:1fr;}
+  .story.featured .headline{font-size:26px;} .story.featured .cover{height:190px;}
+  .grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<div class="topbar">
+  <div class="inner">
+    <span class="mini">Geojournalnews</span>
+    <button class="btn" id="fsDown" title="Reducir letra">A−</button>
+    <button class="btn" id="fsUp" title="Aumentar letra">A+</button>
+    <button class="btn" id="theme" title="Cambiar tema">🌙</button>
+  </div>
+</div>
+<div class="ticker"><div class="track" id="ticker"><span class="tk"><b>Dow Jones</b>51.828,62 <span class="up">▲ +0,93 %</span></span><span class="tk"><b>S&P 500</b>7.743,41 <span class="up">▲ +0,51 %</span></span><span class="tk"><b>Nasdaq</b>27.068,72 <span class="up">▲ +0,48 %</span></span><span class="tk"><b>Russell 2000</b>2.837,55 <span class="up">▲ +0,07 %</span></span><span class="tk"><b>IPC México</b>64.992,23 <span class="up">▲ +1,13 %</span></span><span class="tk"><b>Petróleo WTI</b>$92,41 <span class="down">▼ −2,33 %</span></span><span class="tk"><b>Petróleo Brent</b>$104,32 <span class="down">▼ −2,14 %</span></span><span class="tk"><b>Oro (futuros)</b>$4.315 <span class="up">▲ +0,5 %</span></span><span class="tk"><b>Bono EE. UU. 10 años</b>5,163 % <span class="">máx. desde 2007</span></span><span class="tk"><b>Bono EE. UU. 30 años</b>5,488 % <span class="">máx. desde 2004</span></span><span class="tk"><b>Dólar / peso mexicano</b>17,68 <span class="">sábado</span></span><span class="tk"><b>Bitcoin</b>≈ $84.000 <span class="">leve baja</span></span><span class="tk"><b>Dow Jones</b>51.828,62 <span class="up">▲ +0,93 %</span></span><span class="tk"><b>S&P 500</b>7.743,41 <span class="up">▲ +0,51 %</span></span><span class="tk"><b>Nasdaq</b>27.068,72 <span class="up">▲ +0,48 %</span></span><span class="tk"><b>Russell 2000</b>2.837,55 <span class="up">▲ +0,07 %</span></span><span class="tk"><b>IPC México</b>64.992,23 <span class="up">▲ +1,13 %</span></span><span class="tk"><b>Petróleo WTI</b>$92,41 <span class="down">▼ −2,33 %</span></span><span class="tk"><b>Petróleo Brent</b>$104,32 <span class="down">▼ −2,14 %</span></span><span class="tk"><b>Oro (futuros)</b>$4.315 <span class="up">▲ +0,5 %</span></span><span class="tk"><b>Bono EE. UU. 10 años</b>5,163 % <span class="">máx. desde 2007</span></span><span class="tk"><b>Bono EE. UU. 30 años</b>5,488 % <span class="">máx. desde 2004</span></span><span class="tk"><b>Dólar / peso mexicano</b>17,68 <span class="">sábado</span></span><span class="tk"><b>Bitcoin</b>≈ $84.000 <span class="">leve baja</span></span></div></div>
+
+<div class="wrap">
+<header class="masthead">
+  <p class="wordmark">Geojournalnews</p>
+  <p class="dateline">Sábado, 26 de septiembre de 2026 · resumen de las últimas 24 horas · edición actualizada de la noche</p>
+</header>
+
+<!-- ============ MERCADOS ============ -->
+<section class="markets" id="mercados">
+  <h2><span style="width:9px;height:9px;border-radius:50%;background:var(--c-economia);display:inline-block"></span>Mercados: cierre del viernes 25 de septiembre</h2>
+  <p class="sub">Última sesión bursátil. Las bolsas no operan en fin de semana; la próxima apertura es el lunes 28.</p>
+  <div class="mgrid" id="mgrid">
+<div class="mcard"><div class="n">Dow Jones</div><div class="v">51.828,62</div><div class="c up">+0,93 %</div></div>
+<div class="mcard"><div class="n">S&P 500</div><div class="v">7.743,41</div><div class="c up">+0,51 %</div></div>
+<div class="mcard"><div class="n">Nasdaq</div><div class="v">27.068,72</div><div class="c up">+0,48 %</div></div>
+<div class="mcard"><div class="n">Russell 2000</div><div class="v">2.837,55</div><div class="c up">+0,07 %</div></div>
+<div class="mcard"><div class="n">IPC México</div><div class="v">64.992,23</div><div class="c up">+1,13 %</div></div>
+<div class="mcard"><div class="n">Petróleo WTI</div><div class="v">$92,41</div><div class="c down">−2,33 %</div></div>
+<div class="mcard"><div class="n">Petróleo Brent</div><div class="v">$104,32</div><div class="c down">−2,14 %</div></div>
+<div class="mcard"><div class="n">Oro (futuros)</div><div class="v">$4.315</div><div class="c up">+0,5 %</div></div>
+<div class="mcard"><div class="n">Bono EE. UU. 10 años</div><div class="v">5,163 %</div><div class="c ">máx. desde 2007</div></div>
+<div class="mcard"><div class="n">Bono EE. UU. 30 años</div><div class="v">5,488 %</div><div class="c ">máx. desde 2004</div></div>
+<div class="mcard"><div class="n">Dólar / peso mexicano</div><div class="v">17,68</div><div class="c ">sábado</div></div>
+<div class="mcard"><div class="n">Bitcoin</div><div class="v">≈ $84.000</div><div class="c ">leve baja</div></div>
+</div>
+  <div class="outlook">
+    <div>
+      <h3>Cómo cerró la semana</h3>
+      <p>Wall Street cerró su primera semana ganadora en tres: el S&amp;P 500 sumó 1,2 %, el Nasdaq 2 % y el Dow 0,3 %, lo que cortó una racha de tres semanas en rojo. La tecnología lideró, con un avance semanal de 3,1 % del sector en el S&amp;P 500, mientras que el petróleo retrocedió el viernes ante la expectativa de una reapertura del estrecho de Ormuz.</p>
+      <p>En México, el IPC de la Bolsa Mexicana subió 1,13 % el viernes y 2,55 % en la semana, poniendo fin a cuatro semanas consecutivas de pérdidas. Alsea lideró las alzas (+4,34 %) y Becle registró la mayor caída (−3,99 %).</p>
+    </div>
+    <div>
+      <h3>Qué vigilar en la próxima sesión (lunes 28)</h3>
+      <ul>
+        <li><strong>Acuerdo EE. UU.–China:</strong> el representante comercial Jamieson Greer anunció que el lunes se publicarán más detalles de lo pactado en la cumbre.</li>
+        <li><strong>Bonos:</strong> el rendimiento a 10 años sigue cerca de su nivel más alto desde 2007; si continúa subiendo, podría frenar a la bolsa.</li>
+        <li><strong>Fed:</strong> los futuros asignan cerca de 64 % de probabilidad a otra subida de tasas en octubre.</li>
+        <li><strong>Petróleo:</strong> cualquier señal sobre Ormuz moverá el crudo; el rechazo de Trump al plan iraní es un riesgo al alza para el precio.</li>
+        <li><strong>Agenda:</strong> el informe de empleo de EE. UU. del 2 de octubre es el dato clave de la semana.</li>
+        <li><strong>México:</strong> analistas esperan que el IPC intente consolidarse por encima de 65.000 puntos.</li>
+      </ul>
+    </div>
+  </div>
+  <p class="note">Fuentes: <a href="https://apnews.com/article/wall-street-stocks-dow-nasdaq-36d06c7a598e03539e0e09bdf6b7ede2" target="_blank" rel="noopener">AP</a> · <a href="https://www.cnbc.com/2026/09/24/stock-market-today-live-updates.html" target="_blank" rel="noopener">CNBC</a> · <a href="https://www.investopedia.com/stock-market-today-dow-jones-s-and-p-500-09252026-12139934" target="_blank" rel="noopener">Investopedia</a> · <a href="https://elceo.com/mercados/bmv-ipc-wall-street-hoy-25-de-septiembre-de-2026-cierre/" target="_blank" rel="noopener">El CEO</a> · <a href="https://www.reuters.com/world/china/trump-wrap-up-xi-summit-with-tour-us-archives-2026-09-25/" target="_blank" rel="noopener">Reuters</a> · <a href="https://note.com/hanatakajisan/n/ndb96e688fabc?hl=en" target="_blank" rel="noopener">Market Commentary (note)</a>. Las perspectivas reflejan el consenso de analistas y no son recomendaciones de inversión.</p>
+</section>
+
+<!-- ============ FILTROS ============ -->
+<div class="controls" id="chips"><button class="chip active" data-cat="todas">Todas</button><button class="chip" data-cat="economia"><span class="dot" style="background:var(--c-economia)"></span>Economía</button><button class="chip" data-cat="seguridad"><span class="dot" style="background:var(--c-seguridad)"></span>Seguridad</button><button class="chip" data-cat="diplomacia"><span class="dot" style="background:var(--c-diplomacia)"></span>Diplomacia</button><button class="chip" data-cat="latam"><span class="dot" style="background:var(--c-latam)"></span>América Latina</button><button class="chip" data-cat="mundo"><span class="dot" style="background:var(--c-mundo)"></span>Mundo y clima</button><button class="chip" data-cat="cultura"><span class="dot" style="background:var(--c-cultura)"></span>Cultura</button><button class="chip" data-cat="deportes"><span class="dot" style="background:var(--c-deportes)"></span>Deportes</button></div>
+<div class="search"><input id="q" type="search" placeholder="Buscar en las noticias de hoy…"></div>
+<p class="count" id="count">20 de 20 noticias</p>
+
+<div class="grid" id="grid">
+<article class="story featured" id="n1" data-cat="economia">
+  <div class="cover" style="background:linear-gradient(135deg, var(--c-economia), rgba(0,0,0,.55))"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><path d="M3 20h18"/><path d="M5 16l4-5 4 3 6-8"/><path d="M15 6h4v4"/></svg></span><span class="flags"><img class="flag" src="https://commons.wikimedia.org/wiki/Special:FilePath/Flag_of_the_United_States.svg?width=360" alt="Bandera de United States" loading="lazy" onerror="this.remove()"><img class="flag" src="https://commons.wikimedia.org/wiki/Special:FilePath/Flag_of_Iran.svg?width=360" alt="Bandera de Iran" loading="lazy" onerror="this.remove()"></span><span class="cat">Economía</span><span class="place">Washington · Teherán</span></div>
+  <div class="content">
+    <h3 class="headline">Trump rechaza el plan iraní de siete días para reabrir Ormuz</h3>
+    <p class="dek">El rechazo llega un día después de que la expectativa de un acuerdo hiciera caer el petróleo.</p>
+    <div class="body"><p>El presidente Donald Trump rechazó el marco de siete días propuesto por Irán para un alto el fuego y la reapertura del estrecho de Ormuz, según reportes que citan a funcionarios estadounidenses. La propuesta iraní vinculaba la reapertura de esta vía estratégica con el fin de la presión militar de Estados Unidos, cambios en las sanciones y el levantamiento del bloqueo que afecta a los puertos iraníes.</p><div class="more"><p>Trump sostiene públicamente que Teherán quiere un acuerdo, pero se mantiene escéptico sobre si cumplirá las exigencias de Washington sobre su programa nuclear. El presidente iraní, Masud Pezeshkian, sigue enviando señales de apertura a la diplomacia, aunque la desconfianza entre ambos gobiernos es profunda.</p><p>El mercado había apostado por lo contrario: el viernes, la posibilidad de una reapertura llevó al WTI a cerrar en 92,41 dólares y al Brent en 104,32, con caídas superiores al 2 %. Irán había pedido volver al memorando de entendimiento de junio, que no logró poner fin al conflicto. Para países importadores de combustible como Nicaragua, cualquier giro en Ormuz se traslada a los precios de gasolina, diésel y fletes.</p></div></div>
+    <div class="actions"><button class="btn toggle">Leer más</button><button class="btn share">Compartir</button>
+    <span class="src">Fuentes: <a href="https://openchronicle.org/2026/09/26/global-news-brief-key-developments-around-the-world-september-26-2026/" target="_blank" rel="noopener">Open Chronicle</a> · <a href="https://www.cnbc.com/2026/09/24/stock-market-today-live-updates.html" target="_blank" rel="noopener">CNBC</a><br>Imagen: <a href="https://commons.wikimedia.org/wiki/File:Flag_of_the_United_States.svg" target="_blank" rel="noopener">Wikimedia Commons</a> (dominio público)</span></div>
+  </div></article>
+<article class="story" id="n2" data-cat="economia">
+  <div class="cover" style="background:linear-gradient(135deg, var(--c-economia), rgba(0,0,0,.55))"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><path d="M3 20h18"/><path d="M5 16l4-5 4 3 6-8"/><path d="M15 6h4v4"/></svg></span><span class="flags"><img class="flag" src="https://commons.wikimedia.org/wiki/Special:FilePath/Flag_of_the_United_States.svg?width=360" alt="Bandera de United States" loading="lazy" onerror="this.remove()"></span><span class="cat">Economía</span><span class="place">Nueva York · Washington</span></div>
+  <div class="content">
+    <h3 class="headline">Los bonos del Tesoro rozan máximos desde 2007 y el mercado apuesta por otra subida de la Fed</h3>
+    
+    <div class="body"><p>El rendimiento del bono del Tesoro a 10 años terminó la semana alrededor de 5,16 %, cerca de su nivel más alto desde 2007, y el de 30 años llegó a 5,49 %, un nivel que no se veía desde 2004. La Reserva Federal ya subió su tasa de referencia 25 puntos básicos, y los futuros asignan cerca de 64 % de probabilidad a otra subida en octubre.</p><div class="more"><p>El alza se explica por comentarios duros del gobernador de la Fed Michael Barr, los precios elevados de la energía por la guerra con Irán y un índice de gerentes de compras (PMI) de 58,4, el más alto en más de cinco años. Paradójicamente, la fortaleza de la economía alimenta la expectativa de más subidas de tasas.</p><p>Para América Latina, las tasas altas en Estados Unidos atraen capitales hacia activos en dólares y presionan a las monedas de la región, como se vio esta semana con el peso mexicano.</p></div></div>
+    <div class="actions"><button class="btn toggle">Leer más</button><button class="btn share">Compartir</button>
+    <span class="src">Fuentes: <a href="https://www.cnbc.com/2026/09/24/stock-market-today-live-updates.html" target="_blank" rel="noopener">CNBC</a> · <a href="https://note.com/hanatakajisan/n/ndb96e688fabc?hl=en" target="_blank" rel="noopener">Market Commentary (note)</a><br>Imagen: <a href="https://commons.wikimedia.org/wiki/File:Flag_of_the_United_States.svg" target="_blank" rel="noopener">Wikimedia Commons</a> (dominio público)</span></div>
+  </div></article>
+<article class="story" id="n3" data-cat="economia">
+  <div class="cover" style="background:linear-gradient(135deg, var(--c-economia), rgba(0,0,0,.55))"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><path d="M3 20h18"/><path d="M5 16l4-5 4 3 6-8"/><path d="M15 6h4v4"/></svg></span><span class="flags"><img class="flag" src="https://commons.wikimedia.org/wiki/Special:FilePath/Flag_of_the_United_States.svg?width=360" alt="Bandera de United States" loading="lazy" onerror="this.remove()"><img class="flag" src="https://commons.wikimedia.org/wiki/Special:FilePath/Flag_of_the_People%27s_Republic_of_China.svg?width=360" alt="Bandera de People's Republic of China" loading="lazy" onerror="this.remove()"></span><span class="cat">Economía</span><span class="place">Washington · Pekín</span></div>
+  <div class="content">
+    <h3 class="headline">Trump y Xi cierran su cumbre con mucha ceremonia y pocos acuerdos</h3>
+    <p class="dek">La tregua comercial se extiende dos meses; los detalles se publicarán el lunes.</p>
+    <div class="body"><p>Xi Jinping concluyó el viernes una cumbre de tres días en Washington, con sobrevuelos militares, cena de Estado, té en la Casa Blanca y visita a los Archivos Nacionales. El resultado concreto más importante fue la extensión por dos meses de la tregua comercial que vencía el 10 de noviembre, lo que da más tiempo para negociar un acuerdo mayor.</p><div class="more"><p>Según el representante comercial Jamieson Greer, ambos países acordaron excluir de las disputas algunos bienes clave, como las exportaciones agrícolas y de dispositivos médicos hacia China. Sin embargo, quedaron sin resolver las diferencias sobre inteligencia artificial, Taiwán y los vínculos de China con Irán.</p><p>Según el resumen nocturno de Mezha, Trump advirtió a Xi sobre su apoyo a Irán, mientras Xi instó a Washington y Teherán a volver al formato de negociación de junio. Trump anunció que se reunirá dos veces más con Xi este año: en noviembre en China, durante el foro APEC, y en diciembre en Miami, en la cumbre del G20. Como gesto simbólico, los pandas gigantes Ping Ping y Fu Shuang vivirán durante 10 años en Atlanta.</p></div></div>
+    <div class="actions"><button class="btn toggle">Leer más</button><button class="btn share">Compartir</button>
+    <span class="src">Fuentes: <a href="https://www.reuters.com/world/china/trump-wrap-up-xi-summit-with-tour-us-archives-2026-09-25/" target="_blank" rel="noopener">Reuters</a> · <a href="https://mezha.net/eng/news/a768809c_evening_digest_-mezhi-_new/" target="_blank" rel="noopener">Mezha</a> · <a href="https://www.telemundo.com/noticias/noticias-telemundo-en-la-noche/temporada-2026/capitulo-269/tve-telemundo-en-la-noche-09-26-tmvo13227832" target="_blank" rel="noopener">Telemundo</a><br>Imagen: <a href="https://commons.wikimedia.org/wiki/File:Flag_of_the_United_States.svg" target="_blank" rel="noopener">Wikimedia Commons</a> (dominio público)</span></div>
+  </div></article>
+<article class="story" id="n4" data-cat="economia">
+  <div class="cover" style="background:linear-gradient(135deg, var(--c-economia), rgba(0,0,0,.55))"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><path d="M3 20h18"/><path d="M5 16l4-5 4 3 6-8"/><path d="M15 6h4v4"/></svg></span><span class="flags"><img class="flag" src="https://commons.wikimedia.org/wiki/Special:FilePath/Flag_of_the_United_States.svg?width=360" alt="Bandera de United States" loading="lazy" onerror="this.remove()"></span><span class="cat">Economía</span><span class="place">Silicon Valley · Nueva York</span></div>
+  <div class="content">
+    <h3 class="headline">La inteligencia artificial vuelve a sostener a Wall Street</h3>
+    
+    <div class="body"><p>El sector tecnológico fue el motor de la semana, con un avance de 3,1 % en el S&P 500. Meta Platforms acumuló casi 13 % de ganancia semanal por el entusiasmo en torno a su agente de inteligencia artificial Muse, y Microsoft subió cerca de 4 % el viernes.</p><div class="more"><p>Akamai Technologies ganó alrededor de 3 % después de anunciar que Anthropic se comprometió a pagarle al menos 11.600 millones de dólares en siete años por infraestructura en la nube y software, con posibilidad de ampliar el contrato en 9.000 millones más. Costco también subió 3 % tras presentar resultados trimestrales mejores de lo esperado.</p><p>La otra cara es la cautela: los analistas advierten que el sentimiento de los inversionistas se ha debilitado con el alza de los rendimientos y que, si las tasas siguen subiendo, terminarán pesando más sobre la bolsa.</p></div></div>
+    <div class="actions"><button class="btn toggle">Leer más</button><button class="btn share">Compartir</button>
+    <span class="src">Fuentes: <a href="https://www.cnbc.com/2026/09/24/stock-market-today-live-updates.html" target="_blank" rel="noopener">CNBC</a> · <a href="https://www.investopedia.com/stock-market-today-dow-jones-s-and-p-500-09252026-12139934" target="_blank" rel="noopener">Investopedia</a><br>Imagen: <a href="https://commons.wikimedia.org/wiki/File:Flag_of_the_United_States.svg" target="_blank" rel="noopener">Wikimedia Commons</a> (dominio público)</span></div>
+  </div></article>
+<article class="story" id="n5" data-cat="economia">
+  <div class="cover" style="background:linear-gradient(135deg, var(--c-economia), rgba(0,0,0,.55))"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><path d="M3 20h18"/><path d="M5 16l4-5 4 3 6-8"/><path d="M15 6h4v4"/></svg></span><span class="flags"><img class="flag" src="https://commons.wikimedia.org/wiki/Special:FilePath/Flag_of_Panama.svg?width=360" alt="Bandera de Panama" loading="lazy" onerror="this.remove()"></span><span class="cat">Economía</span><span class="place">Mar Rojo · Canal de Panamá</span></div>
+  <div class="content">
+    <h3 class="headline">Cuellos de botella logísticos amenazan con encarecer la Navidad</h3>
+    
+    <div class="body"><p>El conflicto en Oriente Próximo y la sequía que limita el tránsito por el Canal de Panamá aparecen como los principales cuellos de botella para las cadenas de suministro en el último trimestre del año, según un análisis publicado este sábado.</p><div class="more"><p>La presión simultánea sobre el estrecho de Ormuz y Bab el Mandeb, dos pasos clave para el comercio de energía, se suma al problema. Para los importadores de Centroamérica, esto puede traducirse en fletes más caros y tiempos de tránsito más largos justo antes de la temporada alta de ventas.</p></div></div>
+    <div class="actions"><button class="btn toggle">Leer más</button><button class="btn share">Compartir</button>
+    <span class="src">Fuentes: <a href="https://www.elmundo.es/elmundo/hemeroteca/2026/09/26/noticias.html" target="_blank" rel="noopener">El Mundo</a> · <a href="https://openchronicle.org/2026/09/26/global-news-brief-key-developments-around-the-world-september-26-2026/" target="_blank" rel="noopener">Open Chronicle</a><br>Imagen: <a href="https://commons.wikimedia.org/wiki/File:Flag_of_Panama.svg" target="_blank" rel="noopener">Wikimedia Commons</a> (dominio público)</span></div>
+  </div></article>
+<article class="story" id="n6" data-cat="seguridad">
+  <div class="cover" style="background:linear-gradient(135deg, var(--c-seguridad), rgba(0,0,0,.55))"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg></span><span class="flags"><img class="flag" src="https://commons.wikimedia.org/wiki/Special:FilePath/Flag_of_Ukraine.svg?width=360" alt="Bandera de Ukraine" loading="lazy" onerror="this.remove()"><img class="flag" src="https://commons.wikimedia.org/wiki/Special:FilePath/Flag_of_Russia.svg?width=360" alt="Bandera de Russia" loading="lazy" onerror="this.remove()"></span><span class="cat">Seguridad</span><span class="place">Kiev · Zaporiyia · Sumy · Krasnodar</span></div>
+  <div class="content">
+    <h3 class="headline">Rusia lanza 173 drones sobre Ucrania; Kiev confirma ataque a la refinería de Ilsky</h3>
+    <p class="dek">El balance de muertos varía entre fuentes: AP confirma cuatro y reportes ucranianos iniciales hablaban de seis.</p>
+    <div class="body"><p>Los ataques rusos de la madrugada, con 173 drones según fuentes oficiales ucranianas, dejaron muertos y heridos en varias regiones. Al cierre del día, AP confirmaba al menos cuatro fallecidos: dos mujeres bajo los escombros de un edificio en Zaporiyia y dos personas en Sumy. En Kiev hubo cuatro heridos y daños en edificios residenciales y de oficinas; Zelenski informó de 14 heridos durante la noche y de daños en escuelas, universidades e instalaciones energéticas.</p><div class="more"><p>El Estado Mayor ucraniano confirmó que sus fuerzas atacaron la refinería de Ilsky, en Krasnodar, donde se declaró un incendio. Las autoridades rusas reportaron tres muertos y dos heridos en esa región, sin vincularlos directamente con la refinería.</p><p>En paralelo, Vladímir Putin aseguró el viernes que Moscú no se prepara para un conflicto con Europa, mientras varios países europeos denuncian un aumento de ataques híbridos atribuidos a Rusia, y el Kremlin acusó ante la ONU a Europa de frustrar los planes de paz.</p></div></div>
+    <div class="actions"><button class="btn toggle">Leer más</button><button class="btn share">Compartir</button>
+    <span class="src">Fuentes: <a href="https://mezha.net/eng/news/a768809c_evening_digest_-mezhi-_new/" target="_blank" rel="noopener">Mezha / AP (resumen nocturno)</a> · <a href="https://www.dailymotion.com/video/xbdbfjq" target="_blank" rel="noopener">Euronews</a> · <a href="https://www.elmundo.es/elmundo/hemeroteca/2026/09/26/noticias.html" target="_blank" rel="noopener">El Mundo</a><br>Imagen: <a href="https://commons.wikimedia.org/wiki/File:Flag_of_Ukraine.svg" target="_blank" rel="noopener">Wikimedia Commons</a> (dominio público)</span></div>
+  </div></article>
+<article class="story" id="n7" data-cat="seguridad">
+  <div class="cover" style="background:linear-gradient(135deg, var(--c-seguridad), rgba(0,0,0,.55))"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg></span><span class="flags"><img class="flag" src="https://commons.wikimedia.org/wiki/Special:FilePath/Flag_of_Saudi_Arabia.svg?width=360" alt="Bandera de Saudi Arabia" loading="lazy" onerror="this.remove()"></span><span class="cat">Seguridad</span><span class="place">Riad · Khamis Mushait</span></div>
+  <div class="content">
+    <h3 class="headline">Arabia Saudí intercepta drones hutíes y un misil balístico</h3>
+    
+    <div class="body"><p>Las defensas aéreas saudíes interceptaron este sábado dos drones lanzados por los hutíes de Yemen hacia la región de Riad, según la coalición liderada por Arabia Saudí. Por separado, derribaron un misil balístico dirigido contra Khamis Mushait, en el suroeste del reino, donde se encuentra una importante base aérea. El portavoz hutí Yahya Sarea afirmó que Arabia Saudí lanzó 27 ataques aéreos contra puentes y carreteras en Yemen, y los combates continúan cerca del estrecho de Bab el Mandeb.</p><div class="more"><p>El Consejo de Cooperación del Golfo condenó los ataques y pidió una respuesta internacional. Los jefes militares de Arabia Saudí, Pakistán y Turquía, unidos por un pacto de defensa mutua, se reunieron en Riad. El reino exigió además ante la ONU que se proteja la libertad de navegación en Ormuz y Bab el Mandeb.</p></div></div>
+    <div class="actions"><button class="btn toggle">Leer más</button><button class="btn share">Compartir</button>
+    <span class="src">Fuentes: <a href="https://openchronicle.org/2026/09/26/global-news-brief-key-developments-around-the-world-september-26-2026/" target="_blank" rel="noopener">Open Chronicle</a> · <a href="https://www.elmundo.es/elmundo/hemeroteca/2026/09/26/noticias.html" target="_blank" rel="noopener">El Mundo</a> · <a href="https://www.criticalthreats.org/analysis/iran-update-special-evening-edition-september-26-2026" target="_blank" rel="noopener">CTP-ISW</a><br>Imagen: <a href="https://commons.wikimedia.org/wiki/File:Flag_of_Saudi_Arabia.svg" target="_blank" rel="noopener">Wikimedia Commons</a> (dominio público)</span></div>
+  </div></article>
+<article class="story" id="n8" data-cat="seguridad">
+  <div class="cover" style="background:linear-gradient(135deg, var(--c-seguridad), rgba(0,0,0,.55))"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg></span><span class="flags"><img class="flag" src="https://commons.wikimedia.org/wiki/Special:FilePath/Flag_of_Cuba.svg?width=360" alt="Bandera de Cuba" loading="lazy" onerror="this.remove()"></span><span class="cat">Seguridad</span><span class="place">La Habana · Nueva York</span></div>
+  <div class="content">
+    <h3 class="headline">Cuba califica el bloqueo energético como un acto de guerra</h3>
+    
+    <div class="body"><p>El canciller cubano denunció ante la Asamblea General de la ONU que más de 7.000 contenedores con alimentos, medicamentos y dispositivos médicos destinados a la isla están retenidos en puertos de terceros países.</p><div class="more"><p>La Habana describió la situación como un castigo colectivo destinado a provocar una crisis humanitaria, algo que considera prohibido por el derecho internacional humanitario. El canciller advirtió además de una amenaza latente de uso de la fuerza militar contra Cuba.</p></div></div>
+    <div class="actions"><button class="btn toggle">Leer más</button><button class="btn share">Compartir</button>
+    <span class="src">Fuentes: <a href="https://news.un.org/es/news" target="_blank" rel="noopener">Noticias ONU</a><br>Imagen: <a href="https://commons.wikimedia.org/wiki/File:Flag_of_Cuba.svg" target="_blank" rel="noopener">Wikimedia Commons</a> (dominio público)</span></div>
+  </div></article>
+<article class="story" id="n9" data-cat="mundo">
+  <div class="cover" style="background:linear-gradient(135deg, var(--c-mundo), rgba(0,0,0,.55))"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><path d="M7 15a4 4 0 010-8 5 5 0 019.6 1.5A3.5 3.5 0 0117 15z"/><path d="M8 18l-1 2M12 18l-1 2M16 18l-1 2"/></svg></span><span class="flags"><img class="flag" src="https://commons.wikimedia.org/wiki/Special:FilePath/Flag_of_Mexico.svg?width=360" alt="Bandera de Mexico" loading="lazy" onerror="this.remove()"></span><span class="cat">Mundo y clima</span><span class="place">Baja California Sur · México</span></div>
+  <div class="content">
+    <h3 class="headline">El huracán Polo amenaza Baja California Sur; se suspenden las clases</h3>
+    
+    <div class="body"><p>El huracán Polo se dirige hacia Baja California Sur, donde las autoridades estatales suspendieron las clases como medida preventiva. Según Noticias Telemundo, al menos dos menores murieron en México en emergencias relacionadas con el ciclón.</p><div class="more"><p>En el Pacífico, el huracán Nolo gana fuerza cerca de Hawái, mientras una fuerte tormenta azota el noreste de Estados Unidos con inundaciones y vientos intensos. En el Caribe, República Dominicana registró un segundo sismo de magnitud 4,8 en un mismo día.</p></div></div>
+    <div class="actions"><button class="btn toggle">Leer más</button><button class="btn share">Compartir</button>
+    <span class="src">Fuentes: <a href="https://www.youtube.com/watch?v=G_FPUK2RR5Q" target="_blank" rel="noopener">Noticias Telemundo</a> · <a href="https://www.youtube.com/watch?v=0PDxptTUdWc" target="_blank" rel="noopener">UnoTV</a> · <a href="https://www.telemundo.com/noticias/noticias-telemundo-en-la-noche/temporada-2026/capitulo-269/tve-telemundo-en-la-noche-09-26-tmvo13227832" target="_blank" rel="noopener">Telemundo en la Noche</a><br>Imagen: <a href="https://commons.wikimedia.org/wiki/File:Flag_of_Mexico.svg" target="_blank" rel="noopener">Wikimedia Commons</a> (dominio público)</span></div>
+  </div></article>
+<article class="story" id="n10" data-cat="diplomacia">
+  <div class="cover" style="background:linear-gradient(135deg, var(--c-diplomacia), rgba(0,0,0,.55))"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></span><span class="flags"><img class="flag" src="https://commons.wikimedia.org/wiki/Special:FilePath/Flag_of_Russia.svg?width=360" alt="Bandera de Russia" loading="lazy" onerror="this.remove()"></span><span class="cat">Diplomacia</span><span class="place">Nueva York · Moscú</span></div>
+  <div class="content">
+    <h3 class="headline">Lavrov propone una nueva arquitectura de seguridad euroasiática</h3>
+    
+    <div class="body"><p>El canciller ruso, Serguéi Lavrov, anunció ante la Asamblea General el inicio de los trabajos de una carta euroasiática de la diversidad y la multipolaridad, que presentó como la base de una nueva arquitectura de seguridad en Eurasia. También condenó la captura de Maduro y la muerte de Jamenei, a las que calificó de imposiciones por la fuerza.</p><div class="more"><p>Sobre la reforma de la ONU, Lavrov respaldó que Brasil e India obtengan un asiento permanente en el Consejo de Seguridad, pero rechazó que lo tengan Alemania y Japón, a los que acusó de seguir un camino de militarización.</p></div></div>
+    <div class="actions"><button class="btn toggle">Leer más</button><button class="btn share">Compartir</button>
+    <span class="src">Fuentes: <a href="https://news.un.org/es/news" target="_blank" rel="noopener">Noticias ONU</a><br>Imagen: <a href="https://commons.wikimedia.org/wiki/File:Flag_of_Russia.svg" target="_blank" rel="noopener">Wikimedia Commons</a> (dominio público)</span></div>
+  </div></article>
+<article class="story" id="n11" data-cat="diplomacia">
+  <div class="cover" style="background:linear-gradient(135deg, var(--c-diplomacia), rgba(0,0,0,.55))"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></span><span class="flags"><img class="flag" src="https://commons.wikimedia.org/wiki/Special:FilePath/Flag_of_Venezuela.svg?width=360" alt="Bandera de Venezuela" loading="lazy" onerror="this.remove()"></span><span class="cat">Diplomacia</span><span class="place">Nueva York · Caracas</span></div>
+  <div class="content">
+    <h3 class="headline">Trump se reúne con Delcy Rodríguez en su regreso a la ONU</h3>
+    
+    <div class="body"><p>La presidenta encargada de Venezuela, Delcy Rodríguez, agradeció a Trump su respaldo al proceso de reinserción de su país en la escena internacional, tras un encuentro calificado de histórico que coincidió con su regreso a la ONU.</p><div class="more"><p>Dentro de Venezuela el ambiente es otro: miles de personas salieron a la calle para exigir el regreso de María Corina Machado, y en Caracas fue detenido el exviceministro y exdiputado chavista Alexander «Mimou» Vargas. Por la noche, Machado aseguró que regresará muy pronto a Venezuela.</p></div></div>
+    <div class="actions"><button class="btn toggle">Leer más</button><button class="btn share">Compartir</button>
+    <span class="src">Fuentes: <a href="https://www.libertaddigital.com/internacional/2026-09-26/" target="_blank" rel="noopener">Libertad Digital</a> · <a href="https://www.telemundo.com/noticias/noticias-telemundo-en-la-noche/temporada-2026/capitulo-269/tve-telemundo-en-la-noche-09-26-tmvo13227832" target="_blank" rel="noopener">Telemundo</a><br>Imagen: <a href="https://commons.wikimedia.org/wiki/File:Flag_of_Venezuela.svg" target="_blank" rel="noopener">Wikimedia Commons</a> (dominio público)</span></div>
+  </div></article>
+<article class="story" id="n12" data-cat="diplomacia">
+  <div class="cover" style="background:linear-gradient(135deg, var(--c-diplomacia), rgba(0,0,0,.55))"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></span><span class="flags"><img class="flag" src="https://commons.wikimedia.org/wiki/Special:FilePath/Flag_of_Argentina.svg?width=360" alt="Bandera de Argentina" loading="lazy" onerror="this.remove()"></span><span class="cat">Diplomacia</span><span class="place">Buenos Aires · Nueva York</span></div>
+  <div class="content">
+    <h3 class="headline">Milei exige reanudar las negociaciones por las Malvinas</h3>
+    
+    <div class="body"><p>El presidente argentino, Javier Milei, pidió retomar las negociaciones sobre la soberanía de las islas Malvinas y criticó con dureza a la ONU, a la que calificó de estructura inútil.</p><div class="more"><p>Milei también arremetió contra el presidente del Gobierno español, Pedro Sánchez, al que acusó de haber traicionado a su propio pueblo, en referencia a la crisis migratoria en Ceuta.</p></div></div>
+    <div class="actions"><button class="btn toggle">Leer más</button><button class="btn share">Compartir</button>
+    <span class="src">Fuentes: <a href="https://www.libertaddigital.com/internacional/2026-09-26/" target="_blank" rel="noopener">Libertad Digital</a><br>Imagen: <a href="https://commons.wikimedia.org/wiki/File:Flag_of_Argentina.svg" target="_blank" rel="noopener">Wikimedia Commons</a> (dominio público)</span></div>
+  </div></article>
+<article class="story" id="n13" data-cat="diplomacia">
+  <div class="cover" style="background:linear-gradient(135deg, var(--c-diplomacia), rgba(0,0,0,.55))"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></span><span class="flags"><img class="flag" src="https://commons.wikimedia.org/wiki/Special:FilePath/Flag_of_France.svg?width=360" alt="Bandera de France" loading="lazy" onerror="this.remove()"></span><span class="cat">Diplomacia</span><span class="place">París</span></div>
+  <div class="content">
+    <h3 class="headline">León XIV reúne a multitudes en París en su primera visita oficial a Francia</h3>
+    
+    <div class="body"><p>Cientos de miles de fieles llenaron este sábado los Campos Elíseos para escuchar al papa León XIV, en la primera visita oficial de un pontífice a Francia en 18 años.</p><div class="more"><p>Las autoridades desplegaron unos 14.000 policías, gendarmes y efectivos de seguridad para proteger la misa y los alrededores, en una de las mayores operaciones de seguridad del año en la capital francesa.</p></div></div>
+    <div class="actions"><button class="btn toggle">Leer más</button><button class="btn share">Compartir</button>
+    <span class="src">Fuentes: <a href="https://www.dailymotion.com/video/xbdbfjq" target="_blank" rel="noopener">Euronews</a><br>Imagen: <a href="https://commons.wikimedia.org/wiki/File:Flag_of_France.svg" target="_blank" rel="noopener">Wikimedia Commons</a> (dominio público)</span></div>
+  </div></article>
+<article class="story featured" id="n14" data-cat="latam">
+  <div class="cover" style="background:linear-gradient(135deg, var(--c-latam), rgba(0,0,0,.55))"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><path d="M12 21s-7-6.5-7-12a7 7 0 0114 0c0 5.5-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg></span><span class="flags"><img class="flag" src="https://commons.wikimedia.org/wiki/Special:FilePath/Flag_of_Nicaragua.svg?width=360" alt="Bandera de Nicaragua" loading="lazy" onerror="this.remove()"></span><span class="cat">América Latina</span><span class="place">Managua · Nueva York</span></div>
+  <div class="content">
+    <h3 class="headline">Nicaragua ante la ONU: el narcotráfico es una forma de terrorismo</h3>
+    <p class="dek">El discurso destacó el peso de los BRICS en el escenario internacional.</p>
+    <div class="body"><p>El representante de Nicaragua ante la Asamblea General, Valdrack Ludwing Jaentschke Whitaker, calificó el narcotráfico y el crimen organizado como formas de terrorismo.</p><div class="more"><p>En su intervención, destacó la fuerza que han mostrado los países del BRICS, el bloque de economías emergentes que integran, entre otros, Brasil e India, frente a lo que considera los grandes males de esta época. El discurso reafirma el alineamiento de Managua con ese bloque.</p></div></div>
+    <div class="actions"><button class="btn toggle">Leer más</button><button class="btn share">Compartir</button>
+    <span class="src">Fuentes: <a href="https://news.un.org/es/news" target="_blank" rel="noopener">Noticias ONU</a><br>Imagen: <a href="https://commons.wikimedia.org/wiki/File:Flag_of_Nicaragua.svg" target="_blank" rel="noopener">Wikimedia Commons</a> (dominio público)</span></div>
+  </div></article>
+<article class="story" id="n15" data-cat="latam">
+  <div class="cover" style="background:linear-gradient(135deg, var(--c-latam), rgba(0,0,0,.55))"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><path d="M12 21s-7-6.5-7-12a7 7 0 0114 0c0 5.5-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg></span><span class="flags"><img class="flag" src="https://commons.wikimedia.org/wiki/Special:FilePath/Flag_of_Nicaragua.svg?width=360" alt="Bandera de Nicaragua" loading="lazy" onerror="this.remove()"></span><span class="cat">América Latina</span><span class="place">Managua</span></div>
+  <div class="content">
+    <h3 class="headline">Avanza la consulta de las reformas constitucionales</h3>
+    
+    <div class="body"><p>La copresidenta Rosario Murillo destacó el respaldo de más de 14 partidos políticos y tres movimientos y asociaciones a las reformas parciales a la Constitución, durante un encuentro con la comisión encabezada por el presidente de la Asamblea Nacional, Gustavo Porras. Las reformas fueron aprobadas en primera legislatura tras 36 días de consultas.</p><div class="more"><p>El proyecto fija en siete años los periodos de los cargos de elección popular y de las jefaturas del Ejército y la Policía, y amplía a siete años los periodos de los funcionarios en ejercicio. También establece el 18 de enero como fecha de toma de posesión de los copresidentes, declara sin efectos jurídicos en Nicaragua las leyes de otros Estados u organismos internacionales, y restringe el acceso a cargos públicos a quienes promuevan la injerencia extranjera.</p></div></div>
+    <div class="actions"><button class="btn toggle">Leer más</button><button class="btn share">Compartir</button>
+    <span class="src">Fuentes: <a href="https://www.prensa-latina.cu/2026/09/26/nicaragua-copresidenta-destaca-respaldo-de-partidos-a-reformas/" target="_blank" rel="noopener">Prensa Latina</a><br>Imagen: <a href="https://commons.wikimedia.org/wiki/File:Flag_of_Nicaragua.svg" target="_blank" rel="noopener">Wikimedia Commons</a> (dominio público)</span></div>
+  </div></article>
+<article class="story" id="n16" data-cat="latam">
+  <div class="cover" style="background:linear-gradient(135deg, var(--c-latam), rgba(0,0,0,.55))"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><path d="M12 21s-7-6.5-7-12a7 7 0 0114 0c0 5.5-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg></span><span class="flags"><img class="flag" src="https://commons.wikimedia.org/wiki/Special:FilePath/Flag_of_Nicaragua.svg?width=360" alt="Bandera de Nicaragua" loading="lazy" onerror="this.remove()"></span><span class="cat">América Latina</span><span class="place">Nicaragua · Exilio</span></div>
+  <div class="content">
+    <h3 class="headline">Suben a 68 los presos políticos, 31 de ellos desaparecidos</h3>
+    
+    <div class="body"><p>La Asociación Memoria y Justicia por Nicaragua (AMJ) documentó, al 24 de septiembre, a 53 hombres y 15 mujeres encarcelados por motivos políticos, ocho más que en julio. Quince son adultos mayores y 31 permanecen en condición de desaparición forzada, una tendencia que la organización calificó de especialmente preocupante.</p><div class="more"><p>La lista vuelve a incluir a seis familiares del exdiputado miskito Brooklyn Rivera, fallecido bajo custodia estatal el 30 de mayo, que fueron detenidos cuando intentaban reclamar su cuerpo. Las cifras están avaladas por la CIDH, y la AMJ contabiliza 1.506 detenciones por motivos políticos en los últimos ocho años.</p></div></div>
+    <div class="actions"><button class="btn toggle">Leer más</button><button class="btn share">Compartir</button>
+    <span class="src">Fuentes: <a href="https://www.elnacional.com/2026/09/suben-a-68-los-opositores-presos-en-nicaragua-incluidos-31-desaparecidos/" target="_blank" rel="noopener">El Nacional</a><br>Imagen: <a href="https://commons.wikimedia.org/wiki/File:Flag_of_Nicaragua.svg" target="_blank" rel="noopener">Wikimedia Commons</a> (dominio público)</span></div>
+  </div></article>
+<article class="story" id="n17" data-cat="latam">
+  <div class="cover" style="background:linear-gradient(135deg, var(--c-latam), rgba(0,0,0,.55))"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><path d="M12 21s-7-6.5-7-12a7 7 0 0114 0c0 5.5-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg></span><span class="flags"><img class="flag" src="https://commons.wikimedia.org/wiki/Special:FilePath/Flag_of_Mexico.svg?width=360" alt="Bandera de Mexico" loading="lazy" onerror="this.remove()"></span><span class="cat">América Latina</span><span class="place">Ciudad de México · Washington</span></div>
+  <div class="content">
+    <h3 class="headline">El T-MEC sigue sin renovarse y el peso cierra su peor semana desde marzo</h3>
+    
+    <div class="body"><p>El gobierno de Trump no ha firmado la renovación del T-MEC, y las autoridades mexicanas reconocen que, aunque las negociaciones avanzan, el nuevo acuerdo podría no concretarse antes de fin de mes.</p><div class="more"><p>El peso mexicano recuperó algo de terreno este sábado y cotizó en 17,68 por dólar, frente a 17,71 el viernes. Aun así, acumuló una depreciación semanal de 2,65 %, su mayor pérdida desde la primera semana de marzo, presionado por la subida de tasas de la Fed. En contraste, la Bolsa Mexicana cortó una racha de cuatro semanas de pérdidas.</p></div></div>
+    <div class="actions"><button class="btn toggle">Leer más</button><button class="btn share">Compartir</button>
+    <span class="src">Fuentes: <a href="https://www.marca.com/mx/actualidad/dinero/2026/09/26/precio-dolar-hoy-sabado-26-septiembre-2026-peso-recupera-negociaciones-mexico-eeuu.html" target="_blank" rel="noopener">MARCA México</a> · <a href="https://elceo.com/mercados/bmv-ipc-wall-street-hoy-25-de-septiembre-de-2026-cierre/" target="_blank" rel="noopener">El CEO</a><br>Imagen: <a href="https://commons.wikimedia.org/wiki/File:Flag_of_Mexico.svg" target="_blank" rel="noopener">Wikimedia Commons</a> (dominio público)</span></div>
+  </div></article>
+<article class="story" id="n18" data-cat="mundo">
+  <div class="cover" style="background:linear-gradient(135deg, var(--c-mundo), rgba(0,0,0,.55))"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><path d="M7 15a4 4 0 010-8 5 5 0 019.6 1.5A3.5 3.5 0 0117 15z"/><path d="M8 18l-1 2M12 18l-1 2M16 18l-1 2"/></svg></span><span class="flags"><img class="flag" src="https://commons.wikimedia.org/wiki/Special:FilePath/Flag_of_Thailand.svg?width=360" alt="Bandera de Thailand" loading="lazy" onerror="this.remove()"></span><span class="cat">Mundo y clima</span><span class="place">Bangkok · Tailandia</span></div>
+  <div class="content">
+    <h3 class="headline">Bangkok declara zona de desastre sus 50 distritos por inundaciones</h3>
+    <p class="dek">Casi 300 mm de lluvia en 48 horas desbordaron los canales de la capital tailandesa.</p>
+    <div class="body"><p>Las autoridades de Bangkok declararon zona de desastre los 50 distritos de la ciudad después de que cayeran casi 300 milímetros de lluvia desde el jueves por la tarde, según el gobernador Chadchart Sittipunt. Las calles principales quedaron sumergidas, hubo autos abandonados y el agua entró en viviendas y comercios junto a los canales.</p><div class="more"><p>Más de 84.000 personas en 21 provincias resultaron afectadas en todo el país. Bangkok habilitó más de 200 refugios y miles de residentes se trasladaron a ellos. El gobierno afirmó que la situación se había estabilizado, pero que el agua tardaría dos o tres días en drenarse si no vuelve a llover.</p><p>Una residente comparó la situación con las inundaciones de 2011, la última vez que la ciudad sufrió un golpe similar. Muchos comercios cerraron el sábado y el metro ofreció sus estacionamientos gratis para resguardar vehículos hasta el 2 de octubre.</p></div></div>
+    <div class="actions"><button class="btn toggle">Leer más</button><button class="btn share">Compartir</button>
+    <span class="src">Fuentes: <a href="https://www.aljazeera.com/news/2026/9/26/disaster-zone-declared-across-bangkok-as-heavy-rain-triggers-flooding" target="_blank" rel="noopener">Al Jazeera</a> · <a href="https://www.local10.com/news/2026/09/26/heavy-rain-and-flooding-in-bangkok-disrupts-traffic-and-prompts-evacuations/" target="_blank" rel="noopener">AP / Local 10</a><br>Imagen: <a href="https://commons.wikimedia.org/wiki/File:Flag_of_Thailand.svg" target="_blank" rel="noopener">Wikimedia Commons</a> (dominio público)</span></div>
+  </div></article>
+<article class="story" id="n19" data-cat="cultura">
+  <div class="cover" style="background:linear-gradient(135deg, var(--c-cultura), rgba(0,0,0,.55))"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 5v14M17 5v14M3 9h4M3 15h4M17 9h4M17 15h4"/></svg></span><span class="flags"><img class="flag" src="https://commons.wikimedia.org/wiki/Special:FilePath/Flag_of_Spain.svg?width=360" alt="Bandera de Spain" loading="lazy" onerror="this.remove()"><img class="flag" src="https://commons.wikimedia.org/wiki/Special:FilePath/Flag_of_the_United_Kingdom.svg?width=360" alt="Bandera de United Kingdom" loading="lazy" onerror="this.remove()"></span><span class="cat">Cultura</span><span class="place">San Sebastián · Bogotá</span></div>
+  <div class="content">
+    <h3 class="headline">Mike Leigh gana la Concha de Oro en San Sebastián</h3>
+    
+    <div class="body"><p>El cineasta británico Mike Leigh se llevó la Concha de Oro del Festival de San Sebastián con una película que la crítica de El Mundo calificó de obra maestra. El festival es el más importante del cine en lengua española y una de las citas clave del calendario europeo.</p><div class="more"><p>En la música, la banda Arde Bogotá agotó en menos de cuatro horas las entradas de su gira, que tendrá una fecha el 27 de noviembre en la sala La Riviera de Madrid.</p></div></div>
+    <div class="actions"><button class="btn toggle">Leer más</button><button class="btn share">Compartir</button>
+    <span class="src">Fuentes: <a href="https://www.elmundo.es/elmundo/hemeroteca/2026/09/26/noticias.html" target="_blank" rel="noopener">El Mundo</a><br>Imagen: <a href="https://commons.wikimedia.org/wiki/File:Flag_of_Spain.svg" target="_blank" rel="noopener">Wikimedia Commons</a> (dominio público)</span></div>
+  </div></article>
+<article class="story" id="n20" data-cat="deportes">
+  <div class="cover" style="background:linear-gradient(135deg, var(--c-deportes), rgba(0,0,0,.55))"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><path d="M8 4h8v5a4 4 0 01-8 0z"/><path d="M8 6H5a3 3 0 003 4M16 6h3a3 3 0 01-3 4M12 13v4M8 20h8"/></svg></span><span class="flags"><img class="flag" src="https://commons.wikimedia.org/wiki/Special:FilePath/Flag_of_the_Netherlands.svg?width=360" alt="Bandera de Netherlands" loading="lazy" onerror="this.remove()"><img class="flag" src="https://commons.wikimedia.org/wiki/Special:FilePath/Flag_of_France.svg?width=360" alt="Bandera de France" loading="lazy" onerror="this.remove()"></span><span class="cat">Deportes</span><span class="place">Mundial de ciclismo · Madrid</span></div>
+  <div class="content">
+    <h3 class="headline">Demi Vollering, campeona del mundo; Mbappé, baja unas dos semanas</h3>
+    
+    <div class="body"><p>La neerlandesa Demi Vollering se coronó campeona del mundo de ciclismo en ruta y completó un año de ensueño. En la prueba masculina, el español Juan Ayuso busca medalla en un Mundial sin la presencia de Tadej Pogačar.</p><div class="more"><p>En el fútbol, Kylian Mbappé sufre una hiperextensión de la cápsula posterior de la rodilla izquierda y podría estar de baja solo dos semanas. En la Premier League, la sanción al Manchester City podría tardar hasta un año en conocerse.</p></div></div>
+    <div class="actions"><button class="btn toggle">Leer más</button><button class="btn share">Compartir</button>
+    <span class="src">Fuentes: <a href="https://www.elmundo.es/elmundo/hemeroteca/2026/09/26/noticias.html" target="_blank" rel="noopener">El Mundo</a><br>Imagen: <a href="https://commons.wikimedia.org/wiki/File:Flag_of_the_Netherlands.svg" target="_blank" rel="noopener">Wikimedia Commons</a> (dominio público)</span></div>
+  </div></article>
+</div>
+<p class="empty" id="empty">No hay noticias que coincidan con tu búsqueda.</p>
+
+<div class="threethings">
+  <h2>Si solo recuerdas tres cosas de hoy, son estas:</h2>
+  <ol>
+    <li><strong>Ormuz sigue cerrado a la diplomacia:</strong> el rechazo de Trump al plan iraní amenaza con revertir la caída del petróleo del viernes y mantiene la presión sobre los combustibles.</li>
+    <li><strong>El dinero se encarece:</strong> bonos en máximos desde 2007 y posible nueva subida de la Fed en octubre fortalecen al dólar y encarecen el crédito en la región.</li>
+    <li><strong>Nicaragua se blinda:</strong> reformas con periodos de siete años y un discurso en la ONU alineado con los BRICS, mientras crece la cifra de presos políticos.</li>
+  </ol>
+</div>
+
+<footer>Resumen elaborado a partir de fuentes internacionales; cada noticia enlaza a su fuente original. Imágenes: banderas de <a href="https://commons.wikimedia.org" target="_blank" rel="noopener" style="color:var(--brand)">Wikimedia Commons</a>, dominio público.
+  <p class="closing-line">Por la prensa libre sin miramientos y sin dueños</p>
+</footer>
+</div>
+
+<button class="btn" id="toTop" title="Volver arriba">↑ Arriba</button>
+<div id="toast"></div>
+
+<script>
+(function(){
+var d=document.documentElement; d.className=d.className.replace("nojs","js");
+function $(s){return document.querySelector(s);}
+function store(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v);}catch(e){return null;}}
+function toast(m){var t=$("#toast");t.textContent=m;t.style.display="block";setTimeout(function(){t.style.display="none"},1800);}
+var current="todas", total=document.querySelectorAll(".story").length;
+function filter(){var q=$("#q").value.toLowerCase().trim(),n=0;
+ document.querySelectorAll(".story").forEach(function(a){var ok=(current==="todas"||a.dataset.cat===current)&&(!q||a.textContent.toLowerCase().indexOf(q)>-1);a.style.display=ok?"":"none";if(ok)n++;});
+ $("#count").textContent=n+" de "+total+" noticias";$("#empty").style.display=n?"none":"block";}
+document.querySelectorAll(".chip").forEach(function(b){b.onclick=function(){document.querySelectorAll(".chip").forEach(function(x){x.classList.remove("active")});b.classList.add("active");current=b.dataset.cat;filter();};});
+document.querySelectorAll(".story").forEach(function(a){
+ a.querySelector(".toggle").onclick=function(e){a.classList.toggle("open");e.target.textContent=a.classList.contains("open")?"Leer menos":"Leer más";};
+ a.querySelector(".share").onclick=function(){var url=location.origin+location.pathname+"#"+a.id,title=a.querySelector(".headline").textContent;
+  if(navigator.share){navigator.share({title:title,url:url}).catch(function(){});}else if(navigator.clipboard){navigator.clipboard.writeText(url);toast("Enlace copiado");}};});
+$("#q").addEventListener("input",filter);
+function applyTheme(t){d.dataset.theme=t;$("#theme").textContent=t==="dark"?"☀️":"🌙";}
+var dark=window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches;
+applyTheme(store("gjn-theme")||(dark?"dark":"light"));
+$("#theme").onclick=function(){var t=d.dataset.theme==="dark"?"light":"dark";applyTheme(t);store("gjn-theme",t);};
+var fs=parseInt(store("gjn-fs")||"16",10);function setFs(){d.style.setProperty("--fs",fs+"px");store("gjn-fs",String(fs));}setFs();
+$("#fsUp").onclick=function(){if(fs<22){fs++;setFs();}};$("#fsDown").onclick=function(){if(fs>13){fs--;setFs();}};
+window.addEventListener("scroll",function(){var h=d,p=h.scrollTop/((h.scrollHeight-h.clientHeight)||1)*100;$("#progress").style.width=p+"%";$("#toTop").style.display=h.scrollTop>600?"block":"none";});
+$("#toTop").onclick=function(){scrollTo(0,0);};
+if(location.hash){var el=document.querySelector(location.hash);if(el&&el.classList.contains("story")){el.classList.add("open");el.querySelector(".toggle").textContent="Leer menos";setTimeout(function(){el.scrollIntoView()},100);}}
+})();
+</script>
+</body>
+</html>
